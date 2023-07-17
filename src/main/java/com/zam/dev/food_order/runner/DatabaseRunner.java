@@ -65,6 +65,8 @@ public class DatabaseRunner implements ApplicationRunner {
             user.setUsername("zamz");
             user.setLastName("zami");
             user.setAddress("banyuwangi");
+            user.setEmail("moh@gmail.com");
+            user.setPhoneNumber("123123123123");
             user.setPassword(bcrypt.hashPw("rahasia"));
             String token = jwtService.generateToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);

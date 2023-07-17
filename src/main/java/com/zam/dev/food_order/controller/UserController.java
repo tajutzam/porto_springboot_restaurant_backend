@@ -6,6 +6,7 @@ import com.zam.dev.food_order.model.UserResponse;
 import com.zam.dev.food_order.model.UserUpdateRequest;
 import com.zam.dev.food_order.model.WebResponse;
 import com.zam.dev.food_order.service.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,10 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.print.attribute.standard.Media;
 
 @RestController
+@AllArgsConstructor
 public class UserController {
 
-
-    @Autowired
     private UserService userService;
 
     @PutMapping(path = "/api/user/avatar" , consumes = MediaType.MULTIPART_FORM_DATA_VALUE , produces = MediaType.APPLICATION_JSON_VALUE)

@@ -1,6 +1,5 @@
 package com.zam.dev.food_order.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
@@ -15,28 +14,20 @@ import java.util.Objects;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "cart")
 @Entity
-@Table(name = "menu")
-public class Menu {
+public class Cart {
+
     @Id
     private String id;
-
-    private String name;
-
-    private String image;
-    private int price;
-
-
+    private int totalPrice;
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_menu")
-    private STATUS_MENU statusMenu;
+    @Column(name = "status_cart")
+    private STATUS_CART status_cart;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_id")
-    private Restaurant restaurant;
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @OneToOne
+    @JoinColumn(name = "transaction_id" , nullable = true)
+    private Transaction transaction;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -45,12 +36,16 @@ public class Menu {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "restaurant_id")
+    private Restaurant restaurant;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Menu menu = (Menu) o;
-        return id != null && Objects.equals(id, menu.id);
+        Cart cart = (Cart) o;
+        return id != null && Objects.equals(id, cart.id);
     }
 
     @Override

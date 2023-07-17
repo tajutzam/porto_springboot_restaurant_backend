@@ -6,6 +6,7 @@ import com.zam.dev.food_order.service.AdminService;
 import com.zam.dev.food_order.service.RestaurantService;
 import com.zam.dev.food_order.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,15 +16,15 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.print.attribute.standard.Media;
 
 @RestController
+@AllArgsConstructor
 public class AuthController {
 
-    @Autowired
+
     private RestaurantService restaurantService;
 
-    @Autowired
+
     private AdminService adminService;
 
-    @Autowired
     private UserService userService;
 
     @ResponseStatus(HttpStatus.OK)

@@ -1,9 +1,7 @@
 package com.zam.dev.food_order.service;
 
-import com.zam.dev.food_order.model.LoginRequest;
-import com.zam.dev.food_order.model.RefreshTokenRequest;
-import com.zam.dev.food_order.model.RestaurantRegisterRequest;
-import com.zam.dev.food_order.model.TokenResponse;
+import com.zam.dev.food_order.entity.Restaurant;
+import com.zam.dev.food_order.model.*;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface RestaurantService {
@@ -13,5 +11,9 @@ public interface RestaurantService {
     TokenResponse login(LoginRequest loginRequest);
 
     TokenResponse token(RefreshTokenRequest tokenRequest);
+
+    RestaurantResponse castToRestaurantResponse(Restaurant restaurant);
+
+    RestaurantResponse get(Restaurant restaurant);
 
 }

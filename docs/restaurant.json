@@ -404,29 +404,6 @@
           }
         }
       }
-    },
-    "/menu": {
-      "post": {
-        "summary": "add new menu",
-        "operationId": "",
-        "security": [
-
-        ],
-        "parameters": [
-
-        ],
-        "responses": {
-          "201": {
-            "description": ""
-          },
-          "401": {
-            "description": ""
-          },
-          "400": {
-            "description": ""
-          }
-        }
-      }
     }
   }
 }

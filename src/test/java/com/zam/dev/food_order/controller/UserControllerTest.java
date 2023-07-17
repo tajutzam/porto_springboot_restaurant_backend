@@ -152,6 +152,8 @@ class UserControllerTest {
         request.setPassword("rahasia");
         request.setAddress("banyuwangi");
         request.setUsername("zamz");
+        request.setEmail(System.currentTimeMillis() + "@gmail.com");
+        request.setPhone_number("3433433433433");
 
         mc.perform(
                 put("/api/user/")

@@ -9,6 +9,8 @@ import com.zam.dev.food_order.service.FileUploadService;
 import com.zam.dev.food_order.service.JwtService;
 import com.zam.dev.food_order.service.UserService;
 import com.zam.dev.food_order.service.ValidationService;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
@@ -23,30 +25,32 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Slf4j
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Autowired
+
     private UserRepository userRepository;
 
-    @Autowired
+
     private ValidationService validationService;
 
-    @Autowired
+
     private JwtService jwtService;
 
-    @Autowired
+
     private Bcrypt bcrypt;
 
-    @Autowired
     private FileProperties fileProperties;
 
-    @Autowired
+
     private FileUploadService fileUploadService;
 
 
 
     private UserResponse castToUserResponse(User user) {
-        return UserResponse.builder().username(user.getUsername()).lastName(user.getLastName()).address(user.getAddress()).id(user.getId()).build();
+        return UserResponse.builder().username(user.getUsername()).lastName(user.getLastName()).address(user.getAddress()).id(user.getId()).email(user.getEmail()).phone_number(user
+                .getPhoneNumber()).build();
     }
 
     @Override
@@ -95,17 +99,20 @@ public class UserServiceImpl implements UserService {
     public TokenResponse register(UserRegisterRequest request) {
         validationService.validate(request);
 
-        boolean present = userRepository.findByUsername(request.getUsername()).isPresent();
+        boolean present = userRepository.findByUsernameOrEmail(request.getUsername() , request.getEmail()).isPresent();
         if(present){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "username already been taken");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "username or email already been taken");
         }
         User user = new User();
+        log.info(request.getEmail());
         user.setId(UUID.randomUUID().toString());
         user.setUsername(request.getUsername());
         user.setPassword(bcrypt.hashPw(request.getPassword()));
         user.setAddress(request.getAddress());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
+        user.setPhoneNumber(request.getPhone_number());
+        user.setEmail(request.getEmail());
         String token = jwtService.generateToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         user.setToken(token);
@@ -145,6 +152,8 @@ public class UserServiceImpl implements UserService {
         user.setLastName(request.getLastName());
         user.setAddress(request.getAddress());
         user.setPassword(bcrypt.hashPw(request.getPassword()));
+        user.setPhoneNumber(request.getPhone_number());
+        user.setEmail(request.getEmail());
         User responseUser = userRepository.save(user);
         return castToUserResponse(responseUser);
     }

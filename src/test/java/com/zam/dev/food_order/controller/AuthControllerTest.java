@@ -356,12 +356,14 @@ class AuthControllerTest {
     @Test
     void testUserRegisterSuccess()throws Exception{
 
-        UserRegisterRequest request = new UserRegisterRequest();
-        request.setUsername(String.valueOf(System.currentTimeMillis()));
-        request.setPassword("rahasia");
-        request.setFirstName("zamz");
-        request.setLastName("zamz");
-        request.setAddress("banyuwangi");
+            UserRegisterRequest request = new UserRegisterRequest();
+            request.setUsername(String.valueOf(System.currentTimeMillis()));
+            request.setPassword("rahasia");
+            request.setAddress("banyuwangi");
+            request.setFirstName("zamz");
+            request.setLastName("zami");
+            request.setEmail(System.currentTimeMillis() + "@gmail.com");
+            request.setPhone_number("02123212321");
 
         mc.perform(
                 post("/api/user/auth/register")

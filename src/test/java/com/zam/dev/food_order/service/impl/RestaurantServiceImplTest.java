@@ -41,6 +41,7 @@ class RestaurantServiceImplTest {
     @BeforeEach
     void setUp() throws Exception{
         file = new MockMultipartFile("images", "code.png", "image/png", resourceLoader.getResource("classpath:code.png").getInputStream());
+
     }
 
 
@@ -105,15 +106,31 @@ class RestaurantServiceImplTest {
 
     @Test
     void testResponseStatusCodeException(){
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId("1");
+        restaurant.setUsername("test");
+        restaurant.setBanner("banner");
+        restaurant.setToken("token");
+        restaurant.setRefreshToken("refresh");
+        restaurant.setAddress("banyuwangi");
+        restaurant.setPassword("rahasia");
+        restaurant.setFirstName("zam");
+        restaurant.setLastName("zami");
+        restaurantRepository.save(restaurant);
         assertThrows(ResponseStatusException.class , ()->{
             RestaurantRegisterRequest request = new RestaurantRegisterRequest();
-            request.setUsername("restaurant");
+            request.setUsername("test");
             request.setPassword("rahasia");
             request.setAddress("banyuwangi");
             request.setFirstName("zam zami");
             request.setLastName("tajut");
             TokenResponse tokenResponse = restaurantService.register(request, file);
         });
+    }
+
+    @AfterEach
+    void destroy(){
+        restaurantRepository.deleteAll();
     }
 
 

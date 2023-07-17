@@ -10,6 +10,7 @@ import com.zam.dev.food_order.service.FileUploadService;
 import com.zam.dev.food_order.service.JwtService;
 import com.zam.dev.food_order.service.RestaurantService;
 import com.zam.dev.food_order.service.ValidationService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,28 +22,27 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
 
 
-    @Autowired
+
     private RestaurantRepository restaurantRepository;
 
-    @Autowired
     private ValidationService validationService;
 
-    @Autowired
     private Bcrypt bcrypt;
 
-    @Autowired
+
     private FileProperties fileProperties;
 
-    @Autowired
+
     private FileUploadService fileUploadService;
 
-    @Autowired
+
     private JwtService jwtService;
 
-    @Autowired
+
     private ApplicationProperties applicationProperties;
 
     @Override
@@ -111,7 +111,8 @@ public class RestaurantServiceImpl implements RestaurantService {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "your token is not valid or expired");
     }
 
-    private RestaurantResponse castToRestaurantResponse(Restaurant restaurant){
+    @Override
+    public RestaurantResponse castToRestaurantResponse(Restaurant restaurant){
         return RestaurantResponse.builder()
                 .id(restaurant.getId())
                 .address(restaurant.getAddress())
@@ -120,6 +121,11 @@ public class RestaurantServiceImpl implements RestaurantService {
                 .username(restaurant.getUsername())
                 .banner("http://localhost:"+applicationProperties.getPort()+"/images/restaurant/"+restaurant.getBanner())
                 .build();
+    }
+
+    @Override
+    public RestaurantResponse get(Restaurant restaurant) {
+        return castToRestaurantResponse(restaurant);
     }
 
 }

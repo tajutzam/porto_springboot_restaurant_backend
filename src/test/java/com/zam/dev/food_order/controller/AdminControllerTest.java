@@ -178,7 +178,10 @@ class AdminControllerTest {
     @Test
     void testUpdateCategorySuccess() throws Exception {
 
-        Category category = new Category("1", "category", "image");
+        Category category = new Category();
+        category.setId("1");
+        category.setName("category");
+        category.setImages("images.jpg");
         categoryRepository.save(category);
         mc.perform(multipart(HttpMethod.PUT, "/api/admin/category").file(firstFile).contentType(MediaType.MULTIPART_FORM_DATA).param("name", String.valueOf(System.currentTimeMillis())).header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenResponse.getToken()).param("id", "1")).andExpectAll(status().isOk());
     }
@@ -195,7 +198,11 @@ class AdminControllerTest {
 
     @Test
     void testDeleteCategory() throws Exception {
-        Category category = new Category("1", "category", "image");
+
+        Category category = new Category();
+        category.setId("1");
+        category.setName("category");
+        category.setImages("images.jpg");
         categoryRepository.save(category);
         mc.perform(delete("/api/admin/category/1").header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenResponse.getToken())).andExpectAll(status().isAccepted()).andExpect(result -> {
             WebResponse<Integer> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<WebResponse<Integer>>() {

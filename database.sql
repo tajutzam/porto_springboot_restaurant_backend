@@ -1,5 +1,3 @@
-
-
 CREATE TABLE users
 (
   id varchar(100) NOT NULL,
@@ -13,7 +11,7 @@ CREATE TABLE users
   created_at timestamp NOT NULL,
   update_at timestamp NOT NULL,
   PRIMARY KEY (id)
-)ENGINE INNODB;
+) ENGINE INNODB;
 
 CREATE TABLE admin
 (
@@ -23,7 +21,7 @@ CREATE TABLE admin
   first_name varchar(100) NOT NULL,
   last_name varchar(100) NOT NULL,
   PRIMARY KEY (id)
-)ENGINE INNODB;
+) ENGINE INNODB;
 
 CREATE TABLE restaurant
 (
@@ -31,55 +29,60 @@ CREATE TABLE restaurant
   username varchar(100) NOT NULL,
   password varchar(100) NOT NULL,
   last_name varchar(100) NOT NULL,
-  banner varchar(100) ,
+  banner varchar(100),
   first_name varchar(100) NOT NULL,
   address varchar(100) NOT NULL,
   PRIMARY KEY (id)
-)ENGINE INNODB;
+) ENGINE INNODB;
 
 CREATE TABLE category
 (
   id varchar(100) NOT NULL,
   name varchar(100) NOT NULL,
   images varchar(100) NOT NULL,
-  created_at timestamp not null,
-  updated_at timestamp not null,
+  created_at timestamp NOT NULL,
+  updated_at timestamp NOT NULL,
   PRIMARY KEY (id)
-)ENGINE INNODB;
+) ENGINE INNODB;
 
 CREATE TABLE rating_restaurant
 (
   id varchar(100) NOT NULL,
   restaurant_id varchar(100) NOT NULL,
-  created_at timestamp not null,
-  updated_at timestamp not null,
+  created_at timestamp NOT NULL,
+  total_rate double not null,
+  updated_at timestamp NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) on delete CASCADE on update cascade
-)ENGINE INNODB;
+  FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE INNODB;
 
 CREATE TABLE transaksi
 (
   id varchar(100) NOT NULL,
-  cart_id  varchar(100) NOT NULL,
-  status_transaction enum('CANCELED' , 'DELIVERED' , 'DONE' , 'PROCESS'),
+  cart_id varchar(100) ,
+  status_transaction enum('CANCELED', 'DELIVERED', 'DONE', 'PROCESS'),
   created_at DATE NOT NULL,
   updated_at date NOT NULL,
   total_price INT DEFAULT 0,
   user_id varchar(100) NOT NULL,
+    restaurant_id varchar(100),
   PRIMARY KEY (id),
-  FOREIGN KEY(user_id) REFERENCES users(id) on delete CASCADE on UPDATE CASCADE
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    foreign key (restaurant_id) references restaurant (id) on delete cascade on update cascade
 ) ENGINE INNODB;
 
 CREATE TABLE cart
 (
   id varchar(100) NOT NULL,
   total_price INT DEFAULT 0,
-  status_cart ENUM('CHECKOUT' , 'DONE' , 'QUEUE') NOT NULL,
+  status_cart ENUM('CHECKOUT', 'DONE', 'QUEUE') NOT NULL,
   transaction_id varchar(100) NOT NULL,
-    created_at timestamp not null,
-  updated_at timestamp not null,
+  created_at timestamp NOT NULL,
+  updated_at timestamp NOT NULL,
+  restaurant_id varchar(100) not null,
   PRIMARY KEY (id),
-  FOREIGN KEY (transaction_id) REFERENCES transaksi(id) on DELETE CASCADE on UPDATE CASCADE
+  FOREIGN KEY (transaction_id) REFERENCES transaksi (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  foreign key (restaurant_id) references restaurant (id) on delete cascade on update cascade
 ) ENGINE INNODB;
 
 CREATE TABLE cart_detail
@@ -89,11 +92,11 @@ CREATE TABLE cart_detail
   qty INT NOT NULL,
   sub_total INT NOT NULL,
   cart_id varchar(100) NOT NULL,
-    created_at timestamp not null,
-  updated_at timestamp not null,
+  created_at timestamp NOT NULL,
+  updated_at timestamp NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (cart_id) REFERENCES cart(id) on DELETE CASCADE on UPDATE CASCADE
-)ENGINE INNODB;
+  FOREIGN KEY (cart_id) REFERENCES cart (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE INNODB;
 
 CREATE TABLE detail_rating_restaurant
 (
@@ -102,37 +105,35 @@ CREATE TABLE detail_rating_restaurant
   rating_restaurant_id varchar(100) NOT NULL,
   rate INT NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (user_id) REFERENCES users (id)on delete CASCADE on update cascade,
-  FOREIGN KEY (rating_restaurant_id) REFERENCES rating_restaurant (id)on delete CASCADE on update cascade
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (rating_restaurant_id) REFERENCES rating_restaurant (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE INNODB;
 
-
-
-CREATE TABLE Menu
+CREATE TABLE menu
 (
   id varchar(100) NOT NULL,
   name varchar(100) NOT NULL,
   image varchar(100) NOT NULL,
   price INT NOT NULL,
-  status_menu enum("0" , "1"),
+  status_menu enum('READY', 'NOT_READY'),
   restaurant_id varchar(100) NOT NULL,
   category_id varchar(100) NOT NULL,
-    created_at timestamp not null,
-  updated_at timestamp not null,
+  created_at timestamp NOT NULL,
+  updated_at timestamp NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (restaurant_id) REFERENCES restaurant(id)on delete CASCADE on update cascade,
-  FOREIGN KEY (category_id) REFERENCES category(id)on delete CASCADE on update cascade
-)ENGINE INNODB;
+  FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (category_id) REFERENCES category (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE INNODB;
 
 CREATE TABLE rating_menu
 (
   id varchar(100) NOT NULL,
-  total_rate INT NOT NULL,
+  total_rate double NOT NULL,
   menu_id varchar(100) NOT NULL,
-    created_at timestamp not null,
-  updated_at timestamp not null,
+  created_at timestamp NOT NULL,
+  updated_at timestamp NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (menu_id) REFERENCES Menu(id)on delete CASCADE on update cascade
+  FOREIGN KEY (menu_id) REFERENCES menu (id) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE INNODB;
 
 CREATE TABLE detail_rating_menu
@@ -141,23 +142,19 @@ CREATE TABLE detail_rating_menu
   rating_menu_id varchar(100) NOT NULL,
   rate INT NOT NULL,
   user_id varchar(100) NOT NULL,
-    created_at timestamp not null,
-  updated_at timestamp not null,
+  created_at timestamp NOT NULL,
+  updated_at timestamp NOT NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (user_id) REFERENCES users (id) on delete CASCADE on update cascade,
-  FOREIGN KEY (rating_menu_id) REFERENCES rating_menu(id) on delete CASCADE on update cascade
-)ENGINE INNODB;
+  FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (rating_menu_id) REFERENCES rating_menu (id) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE INNODB;
 
+ALTER TABLE users ADD avatar varchar(400);
+ALTER TABLE users ADD phone_number varchar(13) NOT NULL;
+ALTER TABLE users ADD email varchar(100) UNIQUE NOT NULL;
 
-alter table users add avatar varchar(400);
+ALTER TABLE restaurant ADD token varchar(400);
+ALTER TABLE restaurant ADD refresh_token varchar(400);
 
-
-alter table restaurant add token varchar(400) ;
-
-alter table restaurant add refresh_token varchar(400) ;
-
-alter table admin add token varchar(400);
-
-alter table admin add refresh_token varchar(400) ;
-
-
+ALTER TABLE admin ADD token varchar(400);
+ALTER TABLE admin ADD refresh_token varchar(400);

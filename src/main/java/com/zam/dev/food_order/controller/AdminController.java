@@ -6,6 +6,7 @@ import com.zam.dev.food_order.service.AdminService;
 import com.zam.dev.food_order.service.CategoryService;
 import com.zam.dev.food_order.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
@@ -20,15 +21,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin")
 @CrossOrigin
+@AllArgsConstructor
 public class AdminController {
 
-    @Autowired
+
     private AdminService adminService;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private CategoryService categoryService;
 
     @GetMapping("/")
