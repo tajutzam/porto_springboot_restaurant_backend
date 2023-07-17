@@ -448,11 +448,15 @@
                       "type": "string",
                       "example": "OK"
                     },
-                    "page": {
-                      "type": "integer"
-                    },
-                    "size": {
-                      "type": "integer"
+                    "objectPaging": {
+                      "properties": {
+                        "page": {
+                          "type": "integer"
+                        },
+                        "size": {
+                          "type": "integer"
+                        }
+                      }
                     }
                   }
                 }
@@ -774,6 +778,102 @@
                     },
                     "message": {
                       "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurant" : {
+      "get": {
+        "summary": "list of restaurant",
+        "operationId": "",
+        "parameters": [
+
+        ],
+        "responses": {
+
+        }
+      }
+    },
+    "/restaurant/cash": {
+      "get": {
+        "summary": "income money",
+        "operationId": "",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "return list income all restaurant when balance not 0",
+            "content":{
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "bank_number": {
+                            "type": "integer"
+                          },
+                          "restaurant_name": {
+                            "type": "string"
+                          },
+                          "balance": {
+                            "type": "integer"
+                          }
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurant/cash/{restaurantId}": {
+      "put": {
+        "summary": "mark paid , update balance to 0 again",
+        "operationId": "",
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "success update balance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "example": 1
+                    },
+                    "message": {
+                      "type": "mes"
+
                     },
                     "status": {
                       "type": "integer"

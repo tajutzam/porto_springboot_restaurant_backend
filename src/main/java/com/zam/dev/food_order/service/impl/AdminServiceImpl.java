@@ -1,40 +1,41 @@
 package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.entity.Admin;
-import com.zam.dev.food_order.model.LoginRequest;
-import com.zam.dev.food_order.model.RefreshTokenRequest;
-import com.zam.dev.food_order.model.TokenResponse;
+import com.zam.dev.food_order.entity.Restaurant;
+import com.zam.dev.food_order.model.*;
 import com.zam.dev.food_order.repository.AdminRepository;
+import com.zam.dev.food_order.repository.RestaurantRepository;
 import com.zam.dev.food_order.security.Bcrypt;
 import com.zam.dev.food_order.service.AdminService;
 import com.zam.dev.food_order.service.JwtService;
+import com.zam.dev.food_order.service.RestaurantService;
 import com.zam.dev.food_order.service.ValidationService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class AdminServiceImpl implements AdminService {
-
-    @Autowired
+    private final RestaurantRepository restaurantRepository;
     private AdminRepository adminRepository;
-
-    @Autowired
     private Bcrypt bcrypt;
-
-    @Autowired
     private JwtService jwtService;
-
-    @Autowired
     private ValidationService validationService;
+    private RestaurantService restaurantService;
     @Override
     @Transactional
     public TokenResponse login(LoginRequest loginRequest) {
@@ -70,6 +71,59 @@ public class AdminServiceImpl implements AdminService {
             return TokenResponse.builder().refreshToken(request.getRefreshToken()).token(token).build();
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "your token is not valid or expired");
+    }
+
+    private AdminResponse castToAdminResponse(Admin admin){
+        AdminResponse adminResponse = new AdminResponse();
+        adminResponse.setId(admin.getId());
+        adminResponse.setUsername(admin.getUsername());
+        adminResponse.setFirstName(admin.getFirstName());
+        adminResponse.setLastName(admin.getLastName());
+        return adminResponse;
+    }
+
+    @Override
+    public AdminResponse get(Admin admin) {
+        return castToAdminResponse(admin);
+    }
+
+    @Override
+    public List<CashRestaurantResponse> getBalances(Admin admin) {
+        List<Restaurant> restaurantList = restaurantRepository.findAllByBalanceNot(0);
+        return restaurantList.stream().map(this::castToRestaurantResponse).toList();
+    }
+
+    private CashRestaurantResponse castToRestaurantResponse(Restaurant restaurant){
+        return CashRestaurantResponse.builder().
+                id(restaurant.getId())
+                        .balance(restaurant.getBalance())
+                                .bank_number(restaurant.getBankNumber())
+                                        .restaurant_name(restaurant.getFirstName() + " " + restaurant.getLastName())
+                .build();
+    }
+
+
+
+    @Override
+    public ObjectPagingResponse<List<RestaurantResponse>> restaurants(Admin admin , int page , int size) {
+        if(size == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "size cant 0");
+        }
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Restaurant> restaurantPage = restaurantRepository.findAll(pageable);
+        ObjectPagingResponse<List<RestaurantResponse>> objResponse = new ObjectPagingResponse<>();
+        List<RestaurantResponse> responses = restaurantPage.getContent().stream().map(restaurant -> restaurantService.castToRestaurantResponse(restaurant)).toList();
+        objResponse.setData(responses);
+        objResponse.setMessage("OK");
+        objResponse.setStatus(HttpStatus.OK.value());
+        objResponse.setObjectPaging(new ObjectPaging(restaurantPage.getNumber() , responses.size()));
+        return objResponse;
+    }
+
+    @Override
+    public int pay(String restaurantId) {
+        restaurantRepository.findById(restaurantId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST , "restaurant id not found"));
+        return restaurantRepository.updateBalance(restaurantId);
     }
 
 }

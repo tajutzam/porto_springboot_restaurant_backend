@@ -1,5 +1,6 @@
 package com.zam.dev.food_order.service;
 
+import com.zam.dev.food_order.entity.Category;
 import com.zam.dev.food_order.model.CategoryRequest;
 import com.zam.dev.food_order.model.CategoryResponse;
 import com.zam.dev.food_order.model.CategoryUpdateRequest;
@@ -21,4 +22,6 @@ public interface CategoryService {
     CategoryResponse update(CategoryUpdateRequest request , MultipartFile multipartFile);
 
     int delete(String id);
+
+    CategoryResponse castToCategoryResponse(Category category);
 }

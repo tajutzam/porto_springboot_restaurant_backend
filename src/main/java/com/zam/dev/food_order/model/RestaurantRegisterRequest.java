@@ -1,10 +1,12 @@
 package com.zam.dev.food_order.model;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 
 @Data
 @NoArgsConstructor
@@ -36,5 +38,8 @@ public class RestaurantRegisterRequest {
             min = 4 , max = 100
     )
     private String address;
+
+    @Range(min = 1000 , max = 100000000000000L)
+    private long bank_number;
 
 }

@@ -7,6 +7,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class AdminResponse {
 
     private String username;
@@ -14,17 +17,5 @@ public class AdminResponse {
     private String lastName;
     private String id;
 
-    private AdminResponse(){
-
-    }
-
-    public static AdminResponse getInstance(Admin admin) {
-        AdminResponse adminResponse = new AdminResponse();
-        adminResponse.setId(admin.getId());
-        adminResponse.setUsername(admin.getUsername());
-        adminResponse.setFirstName(admin.getFirstName());
-        adminResponse.setLastName(admin.getLastName());
-        return adminResponse;
-    }
 
 }

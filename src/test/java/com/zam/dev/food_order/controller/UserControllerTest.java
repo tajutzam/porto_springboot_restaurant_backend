@@ -2,7 +2,11 @@ package com.zam.dev.food_order.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zam.dev.food_order.entity.User;
 import com.zam.dev.food_order.model.*;
+import com.zam.dev.food_order.repository.UserRepository;
+import com.zam.dev.food_order.security.Bcrypt;
+import com.zam.dev.food_order.service.JwtService;
 import com.zam.dev.food_order.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,14 +56,37 @@ class UserControllerTest {
     @Autowired
     private UserService userService;
 
+    User user;
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private Bcrypt bcrypt;
+
+    @Autowired
+    private JwtService jwtService;
+
     @BeforeEach
     void setUp()throws Exception{
         file =  new MockMultipartFile("banner", "code.png", "image/png", resourceLoader.getResource("classpath:code.png").getInputStream());
 
+        user = new User();
+        user.setPhoneNumber("asd");
+        user.setEmail("test@gmail.com");
+        user.setId("1");
+        user.setAddress("bwi");
+        user.setPassword(bcrypt.hashPw("rahasia"));
+        user.setAvatar("ava");
+        user.setFirstName("zam");
+        user.setUsername("test");
+        user.setLastName("zami");
+        user.setToken(jwtService.generateToken(user));
+        user.setRefreshToken(jwtService.generateRefreshToken(user));
+        userRepository.save(user);
+
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("admin");
         loginRequest.setPassword("rahasia");
-        loginRequest.setUsername("zamz");
+        loginRequest.setUsername("test");
         userTokenResponse = userService.login(loginRequest);
     }
 
@@ -152,6 +179,8 @@ class UserControllerTest {
         request.setPassword("rahasia");
         request.setAddress("banyuwangi");
         request.setUsername("zamz");
+        request.setEmail(System.currentTimeMillis() + "@gmail.com");
+        request.setPhone_number("3433433433433");
 
         mc.perform(
                 put("/api/user/")

@@ -10,6 +10,7 @@ import com.zam.dev.food_order.model.CategoryResponse;
 import com.zam.dev.food_order.service.CategoryService;
 import com.zam.dev.food_order.service.FileUploadService;
 import com.zam.dev.food_order.service.ValidationService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -30,19 +31,20 @@ import java.util.UUID;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
-    @Autowired
+
     private ApplicationProperties applicationProperties;
-    @Autowired
+
     private FileProperties fileProperties;
-    @Autowired
+
     private CategoryRepository categoryRepository;
-    @Autowired
+
     private ValidationService validationService;
-    @Autowired
+
     private FileUploadService fileUploadService;
-    @Autowired
+
     private ResourceLoader resourceLoader;
     @Override
     public PageImpl<CategoryResponse> findAll(int page, int size) {
@@ -60,11 +62,10 @@ public class CategoryServiceImpl implements CategoryService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "please pick a image");
         }
         String imageCategoryName = fileUploadService.upload(multipartFile, "category", fileProperties.getCategory());
-        Category category = new Category(
-                UUID.randomUUID().toString(),
-                categoryRequest.getName(),
-                imageCategoryName
-        );
+       Category category = new Category();
+       category.setId(UUID.randomUUID().toString());
+       category.setImages(imageCategoryName);
+       category.setName(categoryRequest.getName());
         categoryRepository.save(category);
         return castToCategoryResponse(category);
     }
@@ -107,7 +108,8 @@ public class CategoryServiceImpl implements CategoryService {
         return deleteCategory;
     }
 
-    private CategoryResponse castToCategoryResponse(Category category) {
+    @Override
+    public CategoryResponse castToCategoryResponse(Category category) {
         return CategoryResponse.builder()
                 .id(category.getId())
                 .images("http://localhost:" + applicationProperties.getPort() + "/images/categories/" + category.getImages())

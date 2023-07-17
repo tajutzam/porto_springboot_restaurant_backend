@@ -125,6 +125,13 @@
                   },
                   "address": {
                     "type": "string"
+                  },
+                  "phone_number" : {
+                    "type": "string"
+                  },
+                  "email" : {
+                    "type": "string",
+                    "uniqueItems": true
                   }
                 }
               }
@@ -308,6 +315,9 @@
                     "data": {
                       "type": "object",
                       "properties": {
+                        "id": {
+                          "type": "string"
+                        },
                         "firstName": {
                           "type": "string"
                         },
@@ -317,10 +327,13 @@
                         "address": {
                           "type": "string"
                         },
-                        "username": {
+                        "avatar": {
                           "type": "string"
                         },
-                        "id": {
+                        "email": {
+                          "type": "string"
+                        },
+                        "phone_number": {
                           "type": "string"
                         }
                       }
@@ -374,6 +387,12 @@
                           "type": "string"
                         },
                         "avatar": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "phone_number": {
                           "type": "string"
                         }
                       }
@@ -441,6 +460,12 @@
                   },
                   "password": {
                     "type": "string"
+                  },
+                  "phone_number": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
                   }
                 }
               }
@@ -469,6 +494,12 @@
                           "type": "string"
                         },
                         "avatar": {
+                          "type": "string"
+                        },
+                        "email": {
+                          "type": "string"
+                        },
+                        "phone_number": {
                           "type": "string"
                         }
                       }

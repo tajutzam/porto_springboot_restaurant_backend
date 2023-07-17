@@ -1,13 +1,12 @@
 package com.zam.dev.food_order.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Table(name = "category")
 @Entity
@@ -25,5 +24,8 @@ public class Category {
     private String name;
     @Column(name = "images" , length = 100)
     private String images;
+
+    @OneToMany(mappedBy = "category")
+    private List<Menu> menus;
 
 }

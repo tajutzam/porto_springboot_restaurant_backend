@@ -1,11 +1,10 @@
 package com.zam.dev.food_order.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -32,5 +31,15 @@ public class Restaurant {
     private String refreshToken;
     @Column(name = "banner")
     private String banner;
+
+    @OneToMany(mappedBy = "restaurant")
+    private List<Menu> menus;
+
+    @Column(name = "bank_number")
+    private long bankNumber;
+    @Column(name = "saldo")
+    private long balance;
+
+
 
 }

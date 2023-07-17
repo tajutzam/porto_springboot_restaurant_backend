@@ -10,6 +10,7 @@ import com.zam.dev.food_order.service.FileUploadService;
 import com.zam.dev.food_order.service.JwtService;
 import com.zam.dev.food_order.service.RestaurantService;
 import com.zam.dev.food_order.service.ValidationService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,32 +18,30 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@AllArgsConstructor
 public class RestaurantServiceImpl implements RestaurantService {
 
-
-    @Autowired
     private RestaurantRepository restaurantRepository;
 
-    @Autowired
     private ValidationService validationService;
 
-    @Autowired
     private Bcrypt bcrypt;
 
-    @Autowired
+
     private FileProperties fileProperties;
 
-    @Autowired
+
     private FileUploadService fileUploadService;
 
-    @Autowired
+
     private JwtService jwtService;
 
-    @Autowired
+
     private ApplicationProperties applicationProperties;
 
     @Override
@@ -96,6 +95,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     }
 
     @Override
+    @Transactional
     public TokenResponse token(RefreshTokenRequest tokenRequest) {
 
         validationService.validate(tokenRequest);
@@ -111,15 +111,56 @@ public class RestaurantServiceImpl implements RestaurantService {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "your token is not valid or expired");
     }
 
-    private RestaurantResponse castToRestaurantResponse(Restaurant restaurant){
+    @Override
+    public RestaurantResponse castToRestaurantResponse(Restaurant restaurant){
         return RestaurantResponse.builder()
                 .id(restaurant.getId())
                 .address(restaurant.getAddress())
                 .firstName(restaurant.getFirstName())
                 .lastName(restaurant.getLastName())
                 .username(restaurant.getUsername())
+                .bank_number(restaurant.getBankNumber())
                 .banner("http://localhost:"+applicationProperties.getPort()+"/images/restaurant/"+restaurant.getBanner())
                 .build();
+    }
+
+    @Override
+    public RestaurantResponse get(Restaurant restaurant) {
+        return castToRestaurantResponse(restaurant);
+    }
+
+    @Override
+    @Transactional
+    public RestaurantResponse update(RestaurantUpdateRequest request , Restaurant restaurant) {
+
+        validationService.validate(request);
+        List<Restaurant> restaurantList = restaurantRepository.findAllByIdNot(restaurant.getId());
+        for (Restaurant restaurant1 : restaurantList) {
+            if(restaurant1.getUsername().equals( request.getUsername())){
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "username already been taken");
+            }
+        }
+        restaurant.setUsername(request.getUsername());
+        restaurant.setPassword(bcrypt.hashPw(request.getPassword()));
+        restaurant.setFirstName(request.getFirstName());
+        restaurant.setLastName(request.getLastName());
+        restaurant.setAddress(request.getAddress());
+        restaurant.setBankNumber(request.getBank_number());
+        Restaurant responseRestaurant = restaurantRepository.save(restaurant);
+        return castToRestaurantResponse(responseRestaurant);
+    }
+
+    @Override
+    @Transactional
+    public RestaurantResponse updateAvatar(MultipartFile file, Restaurant restaurant) {
+        if(file.isEmpty() || file.getSize() == 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "please insert a image");
+        }
+
+        String restaurantBanner = fileUploadService.upload(file, "restaurant", fileProperties.getRestaurant());
+        restaurant.setBanner(restaurantBanner);
+        Restaurant response = restaurantRepository.save(restaurant);
+        return castToRestaurantResponse(restaurant);
     }
 
 }

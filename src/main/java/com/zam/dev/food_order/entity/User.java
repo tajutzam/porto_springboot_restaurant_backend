@@ -48,4 +48,10 @@ public class User {
     @Column(name = "update_at")
     private  Instant updatedAt;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "email")
+    private String email;
+
 }

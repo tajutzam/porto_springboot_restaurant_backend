@@ -3,9 +3,11 @@ package com.zam.dev.food_order.service.impl;
 import com.zam.dev.food_order.entity.User;
 import com.zam.dev.food_order.model.*;
 import com.zam.dev.food_order.repository.UserRepository;
+import com.zam.dev.food_order.security.Bcrypt;
 import com.zam.dev.food_order.service.UserService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Slf4j
 class UserServiceImplTest {
 
     @Autowired
@@ -37,14 +40,27 @@ class UserServiceImplTest {
     @Autowired
     private ResourceLoader resourceLoader;
 
+    @Autowired
+    private Bcrypt bcrypt;
 
     @BeforeEach
     void setUp() throws Exception {
 
         file = new MockMultipartFile("images", "code.png", "image/png", resourceLoader.getResource("classpath:code.png").getInputStream());
-
+        User user = new User();
+        user.setPhoneNumber("asd");
+        user.setEmail("test@gmail.com");
+        user.setId("1");
+        user.setAddress("bwi");
+        user.setPassword(bcrypt.hashPw("rahasia"));
+        user.setAvatar("ava");
+        user.setToken("token");
+        user.setFirstName("zam");
+        user.setUsername("test");
+        user.setLastName("zami");
+        userRepository.save(user);
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("zamz");
+        loginRequest.setUsername("test");
         loginRequest.setPassword("rahasia");
         tokenResponse = userService.login(loginRequest);
     }
@@ -62,8 +78,11 @@ class UserServiceImplTest {
     @Test
     void testLoginSuccess() {
         LoginRequest request = new LoginRequest();
-        request.setUsername("zamz");
+        request.setUsername("test");
         request.setPassword("rahasia");
+
+
+
         TokenResponse tokenResponse = userService.login(request);
         assertNotNull(tokenResponse);
         assertNotNull(tokenResponse.getToken());
@@ -103,10 +122,45 @@ class UserServiceImplTest {
         request.setAddress("banyuwangi");
         request.setFirstName("zamz");
         request.setLastName("zami");
+        request.setEmail(System.currentTimeMillis() + "@gmail.com");
+        request.setPhone_number("02123212321");
+        log.info("email , {}", request.getEmail());
+        log.info("user , {}" , request.toString());
         TokenResponse tokenResponse = userService.register(request);
         assertNotNull(tokenResponse);
         assertNotNull(tokenResponse.getRefreshToken());
         assertNotNull(tokenResponse.getToken());
+    }
+
+    @Test
+    void testRegisterDuplicateEmail(){
+
+        User user = new User();
+        user.setPhoneNumber("asd");
+        user.setEmail("test@gmail.com");
+        user.setId("1");
+        user.setAddress("bwi");
+        user.setPassword("rahasia");
+        user.setAvatar("ava");
+        user.setToken("token");
+        user.setFirstName("zam");
+        user.setUsername("test");
+        user.setLastName("zami");
+        userRepository.save(user);
+
+        assertThrows(ResponseStatusException.class, ()->{
+
+            UserRegisterRequest request = new UserRegisterRequest();
+
+            request.setUsername(String.valueOf(System.currentTimeMillis()));
+            request.setPassword("rahasia");
+            request.setAddress("banyuwangi");
+            request.setFirstName("zamz");
+            request.setLastName("zami");
+            request.setEmail("test@gmail.com");
+            request.setPhone_number("02123212321");
+            userService.register(request);
+        });
     }
 
     @Test
@@ -128,11 +182,13 @@ class UserServiceImplTest {
     void testResponseStatusCodeException() {
         assertThrows(ResponseStatusException.class, () -> {
             UserRegisterRequest request = new UserRegisterRequest();
-            request.setUsername("zamz");
+            request.setUsername("test");
             request.setPassword("rahasia");
             request.setAddress("banyuwangi");
             request.setFirstName("zamz");
             request.setLastName("zami");
+            request.setEmail(System.currentTimeMillis() + "@gmail.com");
+            request.setPhone_number("08123123123");
             TokenResponse tokenResponse = userService.register(request);
             assertNotNull(tokenResponse);
             assertNotNull(tokenResponse.getRefreshToken());
@@ -172,7 +228,7 @@ class UserServiceImplTest {
 
     @Test
     void testUpdateAvatarUserSuccess(){
-        User user = userRepository.findByUsername("zamz").orElse(null);
+        User user = userRepository.findByUsername("test").orElse(null);
         UserResponse userResponse = userService.updateAvatar(file, user);
         assertNotNull(userResponse);
         assertNotNull(userResponse.getId());
@@ -182,13 +238,15 @@ class UserServiceImplTest {
 
     @Test
     void testUpdateUserSuccess(){
-        User user = userRepository.findByUsername("zamz").orElse(null);
+        User user = userRepository.findByUsername("test").orElse(null);
         UserUpdateRequest request = new UserUpdateRequest();
         request.setUsername("zamz");
         request.setPassword("rahasia");
         request.setAddress("banyuwangi baru");
         request.setFirstName("zamz");
         request.setLastName("zami");
+        request.setEmail(System.currentTimeMillis()+"@gmail.com");
+        request.setPhone_number("085607185972");
         UserResponse userResponse = userService.updateUser(request, user);
         assertNotNull(userResponse);
         assertNotNull(userResponse.getId());
@@ -219,6 +277,8 @@ class UserServiceImplTest {
             request.setAddress("banyuwangi baru");
             request.setLastName("zami");
             request.setFirstName("zamz");
+            request.setEmail("moh@gmail.com");
+            request.setPhone_number("034323432312");
             UserResponse userResponse = userService.updateUser(request, user);
             assertNotNull(userResponse);
             assertNotNull(userResponse.getId());
@@ -230,6 +290,6 @@ class UserServiceImplTest {
 
     @AfterEach
     void after() {
-
+        userRepository.deleteAll();
     }
 }

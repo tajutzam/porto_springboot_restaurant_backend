@@ -151,36 +151,15 @@
               "type": "file"
             },
             "required": true
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/x-www-form-urlencoded": {
-              "schema": {
-                "properties": {
-                  "username": {
-                    "type": "string"
-                  },
-                  "password" : {
-                    "type": "string"
-                  },
-                  "firstName" : {
-                    "type": "string"
-                  },
-                  "lastName": {
-                    "type": "string"
-                  },
-                  "address": {
-                    "type": "string"
-                  },
-                  "banner": {
-                    "type": "string"
-                  }
-                }
-              }
+          },
+          {
+            "name": "bank_number",
+            "in": "query",
+            "schema": {
+              "type": "integer"
             }
           }
-        },
+        ],
         "responses": {
           "201": {
             "description": "success register new account" ,
@@ -368,6 +347,12 @@
                         },
                         "banner": {
                           "type": "string"
+                        },
+                        "bank_number": {
+                          "type": "integer"
+                        },
+                        "balance": {
+                          "type": "integer"
                         }
                       }
                     },
@@ -403,27 +388,229 @@
             }
           }
         }
-      }
-    },
-    "/menu": {
-      "post": {
-        "summary": "add new menu",
+      },
+      "put": {
+        "summary": "update data restaurant",
         "operationId": "",
-        "security": [
-
-        ],
         "parameters": [
-
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "bank_number": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
         ],
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "success update restaurant login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data" : {
+                      "type": "object",
+                      "properties": {
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": "string"
+                        },
+                        "banner": {
+                          "type": "string"
+                        },
+                        "bank_number": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
           },
           "401": {
-            "description": ""
+            "description": "failed authorization bearer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "example" : null
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": ""
+            "description": "bad request invalid validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "example": null
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/avatar": {
+      "put": {
+        "summary": "update avatar restaurant",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "banner",
+            "in": "query",
+            "schema": {
+              "type": "file"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success update restaurant login",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data" : {
+                      "type": "object",
+                      "properties": {
+                        "firstName": {
+                          "type": "string"
+                        },
+                        "lastName": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": "string"
+                        },
+                        "banner": {
+                          "type": "string"
+                        },
+                        "bank_number": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "failed authorization bearer",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "example" : null
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "bad request invalid validation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "example": null
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }

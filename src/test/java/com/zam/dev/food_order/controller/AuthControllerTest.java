@@ -2,10 +2,15 @@ package com.zam.dev.food_order.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zam.dev.food_order.entity.Restaurant;
+import com.zam.dev.food_order.entity.User;
 import com.zam.dev.food_order.model.*;
 import com.zam.dev.food_order.repository.CategoryRepository;
 import com.zam.dev.food_order.repository.RestaurantRepository;
+import com.zam.dev.food_order.repository.UserRepository;
+import com.zam.dev.food_order.security.Bcrypt;
 import com.zam.dev.food_order.service.AdminService;
+import com.zam.dev.food_order.service.JwtService;
 import com.zam.dev.food_order.service.RestaurantService;
 import com.zam.dev.food_order.service.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -64,17 +69,53 @@ class AuthControllerTest {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private Bcrypt bcrypt;
+
+    @Autowired
+    private JwtService jwtService;
+
+    User user;
+
+    @Autowired
+    private UserRepository userRepository;
+
+
     @BeforeEach
     void setUp() throws Exception {
+        restaurantRepository.deleteAll();
         file =  new MockMultipartFile("banner", "code.png", "image/png", resourceLoader.getResource("classpath:code.png").getInputStream());
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId("1");
+        restaurant.setUsername("test");
+        restaurant.setBanner("banner");
+        restaurant.setToken("token");
+        restaurant.setRefreshToken("refresh");
+        restaurant.setAddress("banyuwangi");
+        restaurant.setPassword(bcrypt.hashPw("rahasia"));
+        restaurant.setFirstName("zam");
+        restaurant.setLastName("zami");
 
+        restaurantRepository.save(restaurant);
+        user = new User();
+        user.setPhoneNumber("asd");
+        user.setEmail("test@gmail.com");
+        user.setId("1");
+        user.setAddress("bwi");
+        user.setPassword(bcrypt.hashPw("rahasia"));
+        user.setAvatar("ava");
+        user.setToken("token");
+        user.setFirstName("zam");
+        user.setUsername("test");
+        user.setLastName("zami");
+        userRepository.save(user);
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setUsername("admin");
         loginRequest.setPassword("rahasia");
         tokenResponse = adminService.login(loginRequest);
-        loginRequest.setUsername("restaurant");
+        loginRequest.setUsername("test");
         restaurantTokenResponse = restaurantService.login(loginRequest);
-        loginRequest.setUsername("zamz");
+        loginRequest.setUsername("test");
         userTokenResponse = userService.login(loginRequest);
     }
 
@@ -150,7 +191,7 @@ class AuthControllerTest {
     @Test
     void testRestaurantLoginSuccess()throws Exception{
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("restaurant");
+        loginRequest.setUsername("test");
         loginRequest.setPassword("rahasia");
         mc.perform(
                 post("/api/restaurant/auth/login")
@@ -218,6 +259,7 @@ class AuthControllerTest {
                         .param("address" , "banyuwangi")
                         .param("password" , "rahasia")
                         .param("username" , "Deuz")
+                        .param("bank_number" , "2000000")
                         .accept(MediaType.APPLICATION_JSON_VALUE)
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
         ).andExpectAll(
@@ -306,7 +348,7 @@ class AuthControllerTest {
     @Test
     void testUserLoginSuccess() throws Exception{
         LoginRequest loginRequest = new LoginRequest();
-        loginRequest.setUsername("zamz");
+        loginRequest.setUsername("test");
         loginRequest.setPassword("rahasia");
         mc.perform(
                 post("/api/user/auth/login")
@@ -356,12 +398,14 @@ class AuthControllerTest {
     @Test
     void testUserRegisterSuccess()throws Exception{
 
-        UserRegisterRequest request = new UserRegisterRequest();
-        request.setUsername(String.valueOf(System.currentTimeMillis()));
-        request.setPassword("rahasia");
-        request.setFirstName("zamz");
-        request.setLastName("zamz");
-        request.setAddress("banyuwangi");
+            UserRegisterRequest request = new UserRegisterRequest();
+            request.setUsername(String.valueOf(System.currentTimeMillis()));
+            request.setPassword("rahasia");
+            request.setAddress("banyuwangi");
+            request.setFirstName("zamz");
+            request.setLastName("zami");
+            request.setEmail(System.currentTimeMillis() + "@gmail.com");
+            request.setPhone_number("02123212321");
 
         mc.perform(
                 post("/api/user/auth/register")

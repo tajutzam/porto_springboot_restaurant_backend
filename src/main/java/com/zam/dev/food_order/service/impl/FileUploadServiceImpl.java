@@ -2,6 +2,7 @@ package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.properties.FileProperties;
 import com.zam.dev.food_order.service.FileUploadService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
@@ -22,9 +23,9 @@ import java.util.Objects;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class FileUploadServiceImpl implements FileUploadService {
 
-    @Autowired
     private ResourceLoader resourceLoader;
 
     @Override

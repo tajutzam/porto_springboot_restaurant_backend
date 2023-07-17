@@ -17,5 +17,5 @@ public class RestaurantResponse {
     private String lastName;
     private String address;
     private String banner;
-
+    private long bank_number;
 }
