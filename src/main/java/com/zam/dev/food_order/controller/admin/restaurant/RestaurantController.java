@@ -1,10 +1,10 @@
 package com.zam.dev.food_order.controller.admin.restaurant;
 
 import com.zam.dev.food_order.entity.Admin;
-import com.zam.dev.food_order.model.CashRestaurantResponse;
-import com.zam.dev.food_order.model.ObjectPagingResponse;
-import com.zam.dev.food_order.model.RestaurantResponse;
-import com.zam.dev.food_order.model.WebResponse;
+import com.zam.dev.food_order.model.restaurant.CashRestaurantResponse;
+import com.zam.dev.food_order.model.other.ObjectPagingResponse;
+import com.zam.dev.food_order.model.restaurant.RestaurantResponse;
+import com.zam.dev.food_order.model.other.WebResponse;
 import com.zam.dev.food_order.service.AdminService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

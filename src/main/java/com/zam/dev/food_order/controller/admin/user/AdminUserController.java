@@ -1,8 +1,8 @@
 package com.zam.dev.food_order.controller.admin.user;
 
 import com.zam.dev.food_order.entity.Admin;
-import com.zam.dev.food_order.model.ObjectPageResponse;
-import com.zam.dev.food_order.model.UserResponse;
+import com.zam.dev.food_order.model.other.ObjectPageResponse;
+import com.zam.dev.food_order.model.user.UserResponse;
 import com.zam.dev.food_order.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageImpl;

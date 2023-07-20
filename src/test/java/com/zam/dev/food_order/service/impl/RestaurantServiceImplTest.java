@@ -1,12 +1,15 @@
 package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.entity.Restaurant;
-import com.zam.dev.food_order.model.*;
+import com.zam.dev.food_order.model.other.LoginRequest;
+import com.zam.dev.food_order.model.other.TokenResponse;
+import com.zam.dev.food_order.model.restaurant.RestaurantRegisterRequest;
+import com.zam.dev.food_order.model.restaurant.RestaurantResponse;
+import com.zam.dev.food_order.model.restaurant.RestaurantUpdateRequest;
 import com.zam.dev.food_order.repository.RestaurantRepository;
 import com.zam.dev.food_order.security.Bcrypt;
 import com.zam.dev.food_order.service.RestaurantService;
 import jakarta.validation.ConstraintViolationException;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +20,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 

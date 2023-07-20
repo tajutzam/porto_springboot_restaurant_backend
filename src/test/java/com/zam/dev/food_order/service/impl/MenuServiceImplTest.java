@@ -4,9 +4,9 @@ import com.zam.dev.food_order.entity.Category;
 import com.zam.dev.food_order.entity.Menu;
 import com.zam.dev.food_order.entity.Restaurant;
 import com.zam.dev.food_order.entity.STATUS_MENU;
-import com.zam.dev.food_order.model.MenuRequest;
-import com.zam.dev.food_order.model.MenuResponse;
-import com.zam.dev.food_order.model.ObjectPagingResponse;
+import com.zam.dev.food_order.model.menu.MenuRequest;
+import com.zam.dev.food_order.model.menu.MenuResponse;
+import com.zam.dev.food_order.model.other.ObjectPagingResponse;
 import com.zam.dev.food_order.repository.CategoryRepository;
 import com.zam.dev.food_order.repository.MenuRepository;
 import com.zam.dev.food_order.repository.RestaurantRepository;
@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.support.TransactionOperations;
 import org.springframework.web.server.ResponseStatusException;
@@ -266,6 +267,39 @@ class MenuServiceImplTest {
         assertNotNull(pagingResponse.getMessage());
         assertEquals(0 , pagingResponse.getObjectPaging().getPage());
         assertEquals(0 , pagingResponse.getObjectPaging().getSize());
+    }
+
+    @Test
+    void testGetMenuByStatus(){
+        menuRepository.deleteAll();
+        Menu menu = new Menu();
+        menu.setId("idmenu");
+        menu.setName("menu");
+        menu.setStatusMenu(STATUS_MENU.READY);
+        menu.setImage("image");
+        menu.setPrice(1000);
+        menu.setRestaurant(restaurant);
+        menu.setCategory(category);
+        PageImpl<MenuResponse> menuResponses = menuService.findAllMenuByStatus(STATUS_MENU.READY, restaurant, 0, 1);
+        assertNotNull(menuResponses.getContent());
+        assertEquals(0 , menuResponses.getNumber());
+        assertEquals(0 , menuResponses.getContent().size());
+    }
+
+    @Test
+    void testUpdateStatusMenu(){
+        menuRepository.deleteAll();
+        Menu menu = new Menu();
+        menu.setId("idmenu");
+        menu.setName("menu");
+        menu.setStatusMenu(STATUS_MENU.READY);
+        menu.setImage("image");
+        menu.setPrice(1000);
+        menu.setRestaurant(restaurant);
+        menu.setCategory(category);
+        menuRepository.save(menu);
+        int deletedMenu = menuService.updateStatusMenu(STATUS_MENU.NOT_READY, restaurant, menu.getId());
+        assertEquals(1 , deletedMenu);
     }
 
     @AfterEach

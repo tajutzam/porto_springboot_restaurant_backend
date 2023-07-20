@@ -2,18 +2,15 @@ package com.zam.dev.food_order.controller.users;
 
 
 import com.zam.dev.food_order.entity.User;
-import com.zam.dev.food_order.model.UserResponse;
-import com.zam.dev.food_order.model.UserUpdateRequest;
-import com.zam.dev.food_order.model.WebResponse;
+import com.zam.dev.food_order.model.user.UserResponse;
+import com.zam.dev.food_order.model.user.UserUpdateRequest;
+import com.zam.dev.food_order.model.other.WebResponse;
 import com.zam.dev.food_order.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.print.attribute.standard.Media;
 
 @RestController
 @AllArgsConstructor

@@ -45,6 +45,19 @@ public class Transaction {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @Column(name = "bank_method")
+    @Enumerated(EnumType.STRING)
+    private BANK_METHOD bank_method;
+
+    @Column(name = "created_payment")
+    private Instant createdPayment;
+
+    @Column(name = "expired_payment")
+    private Instant expiredPayment;
+
+    @Column(name = "va_number")
+    private String vaNumber;
+
     @Override
     public String toString() {
         return "Transaction{" +

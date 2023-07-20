@@ -3,7 +3,13 @@ package com.zam.dev.food_order.service.impl;
 import com.zam.dev.food_order.entity.Category;
 import com.zam.dev.food_order.entity.Menu;
 import com.zam.dev.food_order.entity.Restaurant;
-import com.zam.dev.food_order.model.*;
+import com.zam.dev.food_order.entity.STATUS_MENU;
+import com.zam.dev.food_order.model.admin.CategoryResponse;
+import com.zam.dev.food_order.model.menu.MenuRequest;
+import com.zam.dev.food_order.model.menu.MenuResponse;
+import com.zam.dev.food_order.model.other.ObjectPaging;
+import com.zam.dev.food_order.model.other.ObjectPagingResponse;
+import com.zam.dev.food_order.model.restaurant.RestaurantResponse;
 import com.zam.dev.food_order.properties.ApplicationProperties;
 import com.zam.dev.food_order.properties.FileProperties;
 import com.zam.dev.food_order.repository.CategoryRepository;
@@ -163,4 +169,18 @@ public class MenuServiceImpl implements MenuService {
     }
 
 
+    @Override
+    public PageImpl<MenuResponse> findAllMenuByStatus(STATUS_MENU status_menu , Restaurant restaurant, int page , int size) {
+        Pageable pageable = PageRequest.of(page , size);
+        Page<Menu> menuPage = menuRepository.findAllByStatusMenuAndRestaurant(status_menu,restaurant, pageable);
+        List<MenuResponse> menuResponseList = menuPage.getContent().stream().map(menu -> castToMenuResponse(menu, menu.getCategory(), menu.getRestaurant())).toList();
+        return new PageImpl<>(menuResponseList , pageable , menuPage.getTotalElements());
+    }
+
+    @Override
+    @Transactional
+    public int updateStatusMenu(STATUS_MENU status_menu, Restaurant restaurant, String menuId) {
+        menuRepository.findByRestaurantAndId(restaurant , menuId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST , "menu id not found"));
+        return menuRepository.updateMenuStatus(status_menu, restaurant, menuId);
+    }
 }

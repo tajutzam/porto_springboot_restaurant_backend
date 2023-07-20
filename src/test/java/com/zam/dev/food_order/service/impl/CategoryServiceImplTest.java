@@ -1,9 +1,9 @@
 package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.entity.Category;
-import com.zam.dev.food_order.model.CategoryRequest;
-import com.zam.dev.food_order.model.CategoryResponse;
-import com.zam.dev.food_order.model.CategoryUpdateRequest;
+import com.zam.dev.food_order.model.admin.CategoryRequest;
+import com.zam.dev.food_order.model.admin.CategoryResponse;
+import com.zam.dev.food_order.model.admin.CategoryUpdateRequest;
 import com.zam.dev.food_order.repository.CategoryRepository;
 import com.zam.dev.food_order.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;

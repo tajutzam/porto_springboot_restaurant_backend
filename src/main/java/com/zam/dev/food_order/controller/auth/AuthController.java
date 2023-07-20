@@ -1,20 +1,21 @@
 package com.zam.dev.food_order.controller.auth;
 
-import com.zam.dev.food_order.entity.User;
-import com.zam.dev.food_order.model.*;
+import com.zam.dev.food_order.model.other.LoginRequest;
+import com.zam.dev.food_order.model.other.RefreshTokenRequest;
+import com.zam.dev.food_order.model.other.TokenResponse;
+import com.zam.dev.food_order.model.other.WebResponse;
+import com.zam.dev.food_order.model.restaurant.RestaurantRegisterRequest;
+import com.zam.dev.food_order.model.user.UserRegisterRequest;
 import com.zam.dev.food_order.service.AdminService;
 import com.zam.dev.food_order.service.RestaurantService;
 import com.zam.dev.food_order.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.print.attribute.standard.Media;
 
 @RestController
 @AllArgsConstructor
@@ -109,6 +110,4 @@ public class AuthController {
         TokenResponse response = userService.createNewToken(request);
         return WebResponse.builder().data(response).message("OK").status(HttpStatus.OK.value()).build();
     }
-
-
 }

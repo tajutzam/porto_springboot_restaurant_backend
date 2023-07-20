@@ -2,9 +2,9 @@ package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.entity.Restaurant;
 import com.zam.dev.food_order.entity.User;
-import com.zam.dev.food_order.model.CartRequest;
-import com.zam.dev.food_order.model.CartResponse;
-import com.zam.dev.food_order.model.ObjectPagingResponse;
+import com.zam.dev.food_order.model.transaksi.CartRequest;
+import com.zam.dev.food_order.model.transaksi.CartResponse;
+import com.zam.dev.food_order.model.other.ObjectPagingResponse;
 import com.zam.dev.food_order.repository.CartRepository;
 import com.zam.dev.food_order.repository.RestaurantRepository;
 import com.zam.dev.food_order.repository.UserRepository;

@@ -1,7 +1,12 @@
 package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.entity.User;
-import com.zam.dev.food_order.model.*;
+import com.zam.dev.food_order.model.other.LoginRequest;
+import com.zam.dev.food_order.model.other.RefreshTokenRequest;
+import com.zam.dev.food_order.model.other.TokenResponse;
+import com.zam.dev.food_order.model.user.UserRegisterRequest;
+import com.zam.dev.food_order.model.user.UserResponse;
+import com.zam.dev.food_order.model.user.UserUpdateRequest;
 import com.zam.dev.food_order.properties.ApplicationProperties;
 import com.zam.dev.food_order.properties.FileProperties;
 import com.zam.dev.food_order.repository.UserRepository;
@@ -12,18 +17,14 @@ import com.zam.dev.food_order.service.UserService;
 import com.zam.dev.food_order.service.ValidationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

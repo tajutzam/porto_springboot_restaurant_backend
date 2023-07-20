@@ -4,7 +4,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zam.dev.food_order.entity.Category;
 import com.zam.dev.food_order.entity.Restaurant;
-import com.zam.dev.food_order.model.*;
+import com.zam.dev.food_order.model.admin.AdminResponse;
+import com.zam.dev.food_order.model.admin.CategoryResponse;
+import com.zam.dev.food_order.model.other.LoginRequest;
+import com.zam.dev.food_order.model.other.ObjectPageResponse;
+import com.zam.dev.food_order.model.other.TokenResponse;
+import com.zam.dev.food_order.model.other.WebResponse;
+import com.zam.dev.food_order.model.restaurant.RestaurantResponse;
+import com.zam.dev.food_order.model.user.UserResponse;
 import com.zam.dev.food_order.repository.CategoryRepository;
 import com.zam.dev.food_order.repository.RestaurantRepository;
 import com.zam.dev.food_order.service.AdminService;
@@ -23,7 +30,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

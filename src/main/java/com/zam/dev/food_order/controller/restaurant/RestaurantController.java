@@ -1,16 +1,15 @@
 package com.zam.dev.food_order.controller.restaurant;
 
 import com.zam.dev.food_order.entity.Restaurant;
-import com.zam.dev.food_order.model.*;
-import com.zam.dev.food_order.service.MenuService;
+import com.zam.dev.food_order.model.other.WebResponse;
+import com.zam.dev.food_order.model.restaurant.RestaurantResponse;
+import com.zam.dev.food_order.model.restaurant.RestaurantUpdateRequest;
 import com.zam.dev.food_order.service.RestaurantService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @RestController
 @AllArgsConstructor

@@ -1,19 +1,17 @@
 package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.entity.Category;
-import com.zam.dev.food_order.model.CategoryRequest;
-import com.zam.dev.food_order.model.CategoryUpdateRequest;
+import com.zam.dev.food_order.model.admin.CategoryRequest;
+import com.zam.dev.food_order.model.admin.CategoryUpdateRequest;
 import com.zam.dev.food_order.properties.ApplicationProperties;
 import com.zam.dev.food_order.properties.FileProperties;
 import com.zam.dev.food_order.repository.CategoryRepository;
-import com.zam.dev.food_order.model.CategoryResponse;
+import com.zam.dev.food_order.model.admin.CategoryResponse;
 import com.zam.dev.food_order.service.CategoryService;
 import com.zam.dev.food_order.service.FileUploadService;
 import com.zam.dev.food_order.service.ValidationService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

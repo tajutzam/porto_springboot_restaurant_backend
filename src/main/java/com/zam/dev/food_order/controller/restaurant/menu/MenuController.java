@@ -1,12 +1,14 @@
 package com.zam.dev.food_order.controller.restaurant.menu;
 
 import com.zam.dev.food_order.entity.Restaurant;
-import com.zam.dev.food_order.model.MenuRequest;
-import com.zam.dev.food_order.model.MenuResponse;
-import com.zam.dev.food_order.model.ObjectPagingResponse;
-import com.zam.dev.food_order.model.WebResponse;
+import com.zam.dev.food_order.entity.STATUS_MENU;
+import com.zam.dev.food_order.model.menu.MenuRequest;
+import com.zam.dev.food_order.model.menu.MenuResponse;
+import com.zam.dev.food_order.model.other.ObjectPagingResponse;
+import com.zam.dev.food_order.model.other.WebResponse;
 import com.zam.dev.food_order.service.MenuService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -51,11 +53,24 @@ public class MenuController {
         ).build();
     }
 
-    @DeleteMapping(value = "/{menuId}" , produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(path = "/{menuId}" , produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public WebResponse<Object> deleteMenu(Restaurant restaurant , @PathVariable("menuId") String id){
         int deleteMenu = menuService.deleteMenu(id, restaurant);
         return WebResponse.builder().message("OK").data(deleteMenu).status(HttpStatus.OK.value()).build();
+    }
+
+    @GetMapping(path = "/status" , produces = MediaType.APPLICATION_JSON_VALUE)
+    public WebResponse<Object> findAllMenuByStatus(@RequestParam(name = "status" , required = true , defaultValue = "READY") STATUS_MENU status_menu , Restaurant restaurant , @RequestParam(name = "page" , defaultValue = "0" ) int page , @RequestParam(name = "size" , defaultValue = "10") int size){
+        PageImpl<MenuResponse> responses = menuService.findAllMenuByStatus(status_menu, restaurant, page, size);
+        List<MenuResponse> menuResponseList = responses.getContent();
+        return WebResponse.builder().data(menuResponseList).message("OK").status(HttpStatus.OK.value()).build();
+    }
+
+    @PutMapping(path = "/status/{menuId}" , produces = MediaType.APPLICATION_JSON_VALUE)
+    public WebResponse<Object> updateStatusMenu(Restaurant restaurant , @PathVariable("menuId") String menuId , @RequestParam("status") STATUS_MENU status_menu){
+        int updated = menuService.updateStatusMenu(status_menu, restaurant, menuId);
+        return WebResponse.builder().data(updated).message("OK").status(HttpStatus.OK.value()).build();
     }
 
 }

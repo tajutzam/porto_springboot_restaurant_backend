@@ -1,22 +1,24 @@
 package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.entity.User;
-import com.zam.dev.food_order.model.*;
+import com.zam.dev.food_order.model.other.LoginRequest;
+import com.zam.dev.food_order.model.other.RefreshTokenRequest;
+import com.zam.dev.food_order.model.other.TokenResponse;
+import com.zam.dev.food_order.model.user.UserRegisterRequest;
+import com.zam.dev.food_order.model.user.UserResponse;
+import com.zam.dev.food_order.model.user.UserUpdateRequest;
 import com.zam.dev.food_order.repository.UserRepository;
 import com.zam.dev.food_order.security.Bcrypt;
 import com.zam.dev.food_order.service.UserService;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 

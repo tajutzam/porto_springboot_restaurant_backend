@@ -747,7 +747,10 @@
             }
           }
         }
-      },
+      }
+
+    },
+    "/status/{menuId}": {
       "put": {
         "summary": "update status menu",
         "operationId": "Update status menu",
@@ -759,71 +762,21 @@
             "required": true
           },
           {
-            "name": "id",
-            "in": "query",
+            "name": "menuId",
+            "in": "path",
             "required": true
           }
         ],
         "responses": {
           "200": {
-            "description": "success create new menu",
+            "description": "success update status menu",
             "content": {
               "application/json": {
                 "schema": {
                   "properties": {
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "name": {
-                          "type": "string"
-                        },
-                        "status": {
-                          "type": "boolean"
-                        },
-                        "image": {
-                          "type": "string"
-                        },
-                        "category": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "name": {
-                              "type": "string"
-                            },
-                            "images": {
-                              "type": "string"
-                            }
-                          }
-                        },
-                        "restaurant": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "username": {
-                              "type": "string"
-                            },
-                            "firstName": {
-                              "type": "string"
-                            },
-                            "lastName": {
-                              "type": "string"
-                            },
-                            "address": {
-                              "type": "string"
-                            },
-                            "banner": {
-                              "type": "string"
-                            }
-                          }
-                        }
-                      }
+                      "type": "integer",
+                      "example": 1
                     },
                     "message": {
                       "type": "string"

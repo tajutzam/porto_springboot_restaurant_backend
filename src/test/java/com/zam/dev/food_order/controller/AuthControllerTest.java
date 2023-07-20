@@ -4,8 +4,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zam.dev.food_order.entity.Restaurant;
 import com.zam.dev.food_order.entity.User;
-import com.zam.dev.food_order.model.*;
-import com.zam.dev.food_order.repository.CategoryRepository;
+import com.zam.dev.food_order.model.other.LoginRequest;
+import com.zam.dev.food_order.model.other.RefreshTokenRequest;
+import com.zam.dev.food_order.model.other.TokenResponse;
+import com.zam.dev.food_order.model.other.WebResponse;
+import com.zam.dev.food_order.model.user.UserRegisterRequest;
 import com.zam.dev.food_order.repository.RestaurantRepository;
 import com.zam.dev.food_order.repository.UserRepository;
 import com.zam.dev.food_order.security.Bcrypt;
@@ -13,28 +16,21 @@ import com.zam.dev.food_order.service.AdminService;
 import com.zam.dev.food_order.service.JwtService;
 import com.zam.dev.food_order.service.RestaurantService;
 import com.zam.dev.food_order.service.UserService;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.MockMvcBuilder.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest

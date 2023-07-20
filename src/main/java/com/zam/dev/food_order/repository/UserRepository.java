@@ -25,4 +25,6 @@ public interface UserRepository extends JpaRepository<User , String> {
     @Query("select u from User u where u.id <> ?1")
     List<User> findAllByIdNot(String id);
 
+    Optional<User> findByEmail(String email);
+
 }

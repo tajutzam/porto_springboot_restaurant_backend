@@ -1,7 +1,12 @@
 package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.entity.Restaurant;
-import com.zam.dev.food_order.model.*;
+import com.zam.dev.food_order.model.other.LoginRequest;
+import com.zam.dev.food_order.model.other.RefreshTokenRequest;
+import com.zam.dev.food_order.model.other.TokenResponse;
+import com.zam.dev.food_order.model.restaurant.RestaurantRegisterRequest;
+import com.zam.dev.food_order.model.restaurant.RestaurantResponse;
+import com.zam.dev.food_order.model.restaurant.RestaurantUpdateRequest;
 import com.zam.dev.food_order.properties.ApplicationProperties;
 import com.zam.dev.food_order.properties.FileProperties;
 import com.zam.dev.food_order.repository.RestaurantRepository;
@@ -11,7 +16,6 @@ import com.zam.dev.food_order.service.JwtService;
 import com.zam.dev.food_order.service.RestaurantService;
 import com.zam.dev.food_order.service.ValidationService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

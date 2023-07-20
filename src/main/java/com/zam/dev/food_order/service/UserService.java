@@ -1,8 +1,12 @@
 package com.zam.dev.food_order.service;
 
 import com.zam.dev.food_order.entity.User;
-import com.zam.dev.food_order.model.*;
-import org.springframework.data.domain.Page;
+import com.zam.dev.food_order.model.other.LoginRequest;
+import com.zam.dev.food_order.model.other.RefreshTokenRequest;
+import com.zam.dev.food_order.model.other.TokenResponse;
+import com.zam.dev.food_order.model.user.UserRegisterRequest;
+import com.zam.dev.food_order.model.user.UserResponse;
+import com.zam.dev.food_order.model.user.UserUpdateRequest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.web.multipart.MultipartFile;
 

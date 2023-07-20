@@ -15,4 +15,7 @@ public interface CartRepository extends JpaRepository<Cart , String> {
     List<Cart> findAllByRestaurantAndUser(Restaurant restaurant , User user);
 
     Page<Cart> findAllByUser(User user , Pageable pageable);
+
+    Optional<Cart> findByUserAndId(User user , String cartId);
+
 }

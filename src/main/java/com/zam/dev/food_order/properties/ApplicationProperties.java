@@ -7,12 +7,21 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 @Component
+@Getter
+@Setter
 public class ApplicationProperties {
 
 
     @Value("${server.port}")
-    @Getter
-    @Setter
     private int port;
+
+    @Value("${midtrans.server.key}")
+    private String serverKey;
+
+    @Value("${midtrans.server.production}")
+    private boolean productionMode;
+    @Value("${midtrans.client.key}")
+    private String clientKey;
+
 
 }

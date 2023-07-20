@@ -1,8 +1,8 @@
 package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.entity.*;
-import com.zam.dev.food_order.model.CartDetailRequest;
-import com.zam.dev.food_order.model.CartDetailResponse;
+import com.zam.dev.food_order.model.transaksi.CartDetailRequest;
+import com.zam.dev.food_order.model.transaksi.CartDetailResponse;
 import com.zam.dev.food_order.repository.*;
 import com.zam.dev.food_order.service.CartDetailService;
 import com.zam.dev.food_order.service.JwtService;

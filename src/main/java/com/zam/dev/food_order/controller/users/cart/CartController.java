@@ -1,17 +1,16 @@
 package com.zam.dev.food_order.controller.users.cart;
 
 import com.zam.dev.food_order.entity.User;
-import com.zam.dev.food_order.model.CartRequest;
-import com.zam.dev.food_order.model.CartResponse;
-import com.zam.dev.food_order.model.ObjectPagingResponse;
-import com.zam.dev.food_order.model.WebResponse;
+import com.zam.dev.food_order.model.transaksi.CartRequest;
+import com.zam.dev.food_order.model.transaksi.CartResponse;
+import com.zam.dev.food_order.model.other.ObjectPagingResponse;
+import com.zam.dev.food_order.model.other.WebResponse;
 import com.zam.dev.food_order.service.CartService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.print.attribute.standard.Media;
 import java.util.List;
 
 @RestController("userCart")
