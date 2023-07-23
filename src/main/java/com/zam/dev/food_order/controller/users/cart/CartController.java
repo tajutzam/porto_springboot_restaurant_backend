@@ -1,5 +1,6 @@
 package com.zam.dev.food_order.controller.users.cart;
 
+import com.zam.dev.food_order.entity.STATUS_CART;
 import com.zam.dev.food_order.entity.User;
 import com.zam.dev.food_order.model.transaksi.CartRequest;
 import com.zam.dev.food_order.model.transaksi.CartResponse;
@@ -32,8 +33,8 @@ public class CartController {
     }
 
     @GetMapping(path = "" , produces = MediaType.APPLICATION_JSON_VALUE)
-    public ObjectPagingResponse<List<CartResponse>> cartsUser(User user , @RequestParam(name = "page" , defaultValue = "0" , required = true) int page , @RequestParam(name = "size" , defaultValue = "10" , required = false) int size){
-        return cartService.cartsUser(user , page , size);
+    public ObjectPagingResponse<List<CartResponse>> cartsUser(User user , @RequestParam(name = "page" , defaultValue = "0" , required = true) int page , @RequestParam(name = "size" , defaultValue = "10" , required = false) int size , @RequestParam(value = "status" , defaultValue = "QUEUE")STATUS_CART status_cart){
+        return cartService.cartsUser(user , page , size , status_cart);
     }
 
 }

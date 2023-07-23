@@ -240,6 +240,83 @@
           }
         }
       }
+    },
+    "/order/check/restaurant/{restaurantId}": {
+      "description": "check restaurant apakah sudah ada checkout nya",
+      "get": {
+        "summary": "",
+        "operationId": "",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "restaurant tidak ada di checkout , buat cart baru",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "return cart",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "data":{
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "total_price": {
+                          "type": "integer"
+                        },
+                        "status_cart": {
+                          "type": "string"
+                        },
+                        "created_at": {
+                          "type": "string"
+                        },
+                        "updated_at": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": ""
+          }
+        }
+      }
     }
   }
 }

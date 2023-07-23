@@ -181,58 +181,96 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "properties": {
                     "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "string"
-                        },
-                        "total_price": {
-                          "type": "integer"
-                        },
-                        "status_transaction": {
-                          "type": "string"
-                        },
-                        "created_at": {
-                          "type": "string"
-                        },
-                        "updated_at": {
-                          "type": "string"
-                        },
-                        "user": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "firstName": {
-                              "type": "string"
-                            },
-                            "lastName": {
-                              "type": "string"
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "total_price": {
+                            "type": "integer"
+                          },
+                          "created_at": {
+                            "type": "string"
+                          },
+                          "updated_at": {
+                            "type": "string"
+                          },
+                          "cart": {
+                            "type": "object",
+                            "properties": {
+                              "total_price": {
+                                "type": "integer"
+                              },
+                              "id":{
+                                "type": "string"
+                              },
+                              "created_at": {
+                                "type": "string"
+                              },
+                              "updated_at": {
+                                "type": "string"
+                              },
+                              "item_details": {
+                                "type": "array",
+                                "items": {
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "sub_total": {
+                                      "type": "integer"
+                                    },
+                                    "qty": {
+                                      "type": "integer"
+                                    },
+                                    "menu": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string"
+                                        },
+                                        "name": {
+                                          "type": "string"
+                                        },
+                                        "price": {
+                                          "type": "string"
+                                        },
+                                        "image": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "payment": {
+                            "properties": {
+                              "bank": {
+                                "type": "string"
+                              },
+                              "va_number": {
+                                "type": "string"
+                              }
                             }
                           }
-                        },
-                        "restaurant": {
-                          "type": "object",
-                          "properties": {
-                            "id": {
-                              "type": "string"
-                            },
-                            "firstName": {
-                              "type": "string"
-                            },
-                            "lastName": {
-                              "type": "string"
-                            }
-                          }
+
                         }
                       }
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "integer"
                     }
                   }
                 }
@@ -325,7 +363,18 @@
                               }
                             }
                           }
+                        },
+                        "payment": {
+                          "properties": {
+                            "bank": {
+                              "type": "string"
+                            },
+                            "va_number": {
+                              "type": "string"
+                            }
+                          }
                         }
+
                       }
                     },
                     "message": {

@@ -60,10 +60,10 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public ObjectPagingResponse<List<CartResponse>> cartsUser(User user, int page , int size) {
+    public ObjectPagingResponse<List<CartResponse>> cartsUser(User user, int page , int size , STATUS_CART status_cart) {
 
         Pageable pageable = PageRequest.of(page ,size);
-        Page<Cart> cartPage = cartRepository.findAllByUser(user, pageable);
+        Page<Cart> cartPage = cartRepository.findAllByUserAndStatusCart(user, status_cart , pageable);
         List<CartResponse> responseList = cartPage.getContent().stream().map(this::castToCartResponse).toList();
         ObjectPaging objectPaging = new ObjectPaging();
         objectPaging.setPage(cartPage.getNumber());
@@ -74,6 +74,15 @@ public class CartServiceImpl implements CartService {
         response.setMessage("OK");
         response.setData(responseList);
         return response;
+    }
+
+    @Override
+    public CartResponse checkRestaurantCart(String restaurantId , User user) {
+        Cart cart = cartRepository.findByRestaurant_idAndUser(restaurantId , user).orElse(null);
+        if(cart != null){
+            return castToCartResponse(cart);
+        }
+        return null;
     }
 
     private CartResponse castToCartResponse(Cart cart){

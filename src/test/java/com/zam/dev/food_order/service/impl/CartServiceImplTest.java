@@ -1,6 +1,7 @@
 package com.zam.dev.food_order.service.impl;
 
 import com.zam.dev.food_order.entity.Restaurant;
+import com.zam.dev.food_order.entity.STATUS_CART;
 import com.zam.dev.food_order.entity.User;
 import com.zam.dev.food_order.model.transaksi.CartRequest;
 import com.zam.dev.food_order.model.transaksi.CartResponse;
@@ -121,7 +122,7 @@ class CartServiceImplTest {
         CartResponse cartResponse = cartService.createCart(request, user);
         assertNotNull(cartResponse);
 
-        ObjectPagingResponse<List<CartResponse>> response = cartService.cartsUser(user, 0, 1);
+        ObjectPagingResponse<List<CartResponse>> response = cartService.cartsUser(user, 0, 1 , STATUS_CART.QUEUE);
         assertEquals(1 , response.getObjectPaging().getSize());
         assertEquals(0 , response.getObjectPaging().getPage());
         assertNotNull(response.getData());

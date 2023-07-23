@@ -5,25 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionResponse {
 
-    private String status_code;
-    private String status_message;
-    private String transaction_id;
-    private String order_id;
-    private String merchant_id;
-    private String gross_amount;
-    private String currency;
-    private String payment_type;
-    private String transaction_time;
-    private String transaction_status;
-    private String fraud_status;
-    private List<VaNumber> va_numbers;
-    private String expiry_time;
+    private String id;
+    private int total_price;
+    private String created_at;
+    private String updated_at;
+    private String status;
+    private VaNumber payment;
+    private CartTransactionResponse cart;
 
 }

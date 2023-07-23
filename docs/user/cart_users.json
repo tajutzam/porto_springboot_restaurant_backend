@@ -41,6 +41,14 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "CHECKOUT , DONE , QUEUE , CANCELED"
+            }
           }
         ],
         "responses": {

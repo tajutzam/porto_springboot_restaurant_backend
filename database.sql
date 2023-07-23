@@ -81,7 +81,7 @@
     (
       id varchar(100) NOT NULL,
       total_price INT DEFAULT 0,
-      status_cart ENUM('CHECKOUT', 'DONE', 'QUEUE') NOT NULL,
+      status_cart ENUM('CHECKOUT', 'DONE', 'QUEUE' , 'CANCEL' , 'EXPIRE') NOT NULL,
       transaction_id varchar(100),
       created_at timestamp NOT NULL,
       updated_at timestamp NOT NULL,

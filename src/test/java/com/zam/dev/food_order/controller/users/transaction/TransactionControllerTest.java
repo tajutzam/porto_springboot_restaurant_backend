@@ -1,64 +1,82 @@
-package com.zam.dev.food_order.service.impl;
+package com.zam.dev.food_order.controller.users.transaction;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.midtrans.httpclient.error.MidtransError;
 import com.zam.dev.food_order.entity.*;
-import com.zam.dev.food_order.model.transaksi.CartDetailRequest;
 import com.zam.dev.food_order.model.midtrans.MidtransPaymentApiRequest;
-import com.zam.dev.food_order.model.transaksi.TransactionResponse;
+import com.zam.dev.food_order.model.other.WebResponse;
+import com.zam.dev.food_order.model.transaksi.CartDetailRequest;
 import com.zam.dev.food_order.model.transaksi.TransactionCreateResponse;
 import com.zam.dev.food_order.repository.*;
 import com.zam.dev.food_order.service.CartDetailService;
+import com.zam.dev.food_order.service.JwtService;
 import com.zam.dev.food_order.service.TransactionService;
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.List;
 import java.util.UUID;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.servlet.MockMvc;
 
+import static  org.springframework.test.web.servlet.MockMvcBuilder.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-class TransactionServiceImplTest
-{
+@AutoConfigureMockMvc
+class TransactionControllerTest {
 
     @Autowired
-    private TransactionService transactionService;
+    private MockMvc mc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    User user;
+
+    Restaurant restaurant;
+    Menu menu;
 
     @Autowired
     private UserRepository userRepository;
-
-    User user;
     @Autowired
     private CartRepository cartRepository;
 
-    Cart cart;
-
-    Restaurant restaurant;
     @Autowired
     private RestaurantRepository restaurantRepository;
+
     @Autowired
     private CategoryRepository categoryRepository;
-    Category category;
-    Menu menu;
-    CartDetail cartDetail;
     @Autowired
     private MenuRepository menuRepository;
     @Autowired
     private CartDetailRepository cartDetailRepository;
-
+    @Autowired
+    private TransactionRepository transactionRepository;
+    Category category;
+    Cart cart;
     @Autowired
     private CartDetailService cartDetailService;
 
     @Autowired
-    private TransactionOperations transactionOperations;
+    private JwtService jwtService;
     @Autowired
-    private TransactionRepository transactionRepository;
-
+    private TransactionService transactionService;
 
     @BeforeEach
     void setUp(){
@@ -73,7 +91,6 @@ class TransactionServiceImplTest
         user.setId("test");
         user.setUsername("test");
         user.setRefreshToken("refresh");
-        user.setToken("token");
         user.setAvatar("avatar");
         user.setPassword("rahasia");
         user.setFirstName("firstName");
@@ -81,6 +98,8 @@ class TransactionServiceImplTest
         user.setAddress("banyuwangi");
         user.setPhoneNumber("087623123123");
         user.setEmail("mohammadtajutzamzami07@gmail.com");
+        String token = jwtService.generateToken(user);
+        user.setToken(token);
         userRepository.save(user);
 
         restaurant = new Restaurant();
@@ -126,78 +145,61 @@ class TransactionServiceImplTest
         request.setCartId(cart.getId());
 
         cartDetailService.createOrder(request);
-
     }
 
+
+
     @Test
-    void testCreateTransactionSuccess() throws MidtransError, JsonProcessingException {
+    void testCreateTransaction()throws Exception{
         MidtransPaymentApiRequest request = new MidtransPaymentApiRequest();
         request.setBank_transfer("bca");
         request.setCartId(cart.getId());
-        TransactionCreateResponse transaction = transactionService.createTransaction(user, request);
-        System.out.println(transaction.getStatus_code());
-        assertNotNull(transaction);
-        System.out.println(transaction.toString());
-    }
-
-    @Test
-    void testCreateTransactionConstraintViolation(){
-        assertThrows(ConstraintViolationException.class , () -> {
-            MidtransPaymentApiRequest request = new MidtransPaymentApiRequest();
-            request.setBank_transfer("bni");
-            request.setCartId(cart.getId());
-            TransactionCreateResponse transaction = transactionService.createTransaction(user, request);
-            System.out.println(transaction.getStatus_code());
-            assertNotNull(transaction);
-            System.out.println(transaction.toString());
+        mc.perform(
+                post("/api/user/transaction")
+                        .header(HttpHeaders.AUTHORIZATION , "Bearer " + user.getToken())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+        ).andExpectAll(
+                status().isCreated()
+        ).andExpect(result -> {
+            WebResponse<TransactionCreateResponse> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<WebResponse<TransactionCreateResponse>>() {
+            });
+            assertEquals(HttpStatus.CREATED.value() , response.getStatus());
+            System.out.println(response.getData().toString());
         });
     }
 
     @Test
-    void testGetTransactionAndUpdateStatus() throws MidtransError, JsonProcessingException {
-        MidtransPaymentApiRequest request = new MidtransPaymentApiRequest();
-        request.setBank_transfer("bca");
-        request.setCartId(cart.getId());
-        TransactionCreateResponse response = transactionOperations.execute(status -> {
-            try {
-                return transactionService.createTransaction(user, request);
-            } catch (MidtransError | JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+    void testFindAllTransaction()throws Exception{
+        mc.perform(
+                get("/api/user/transaction")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION , "Bearer " + user.getToken())
+        ).andExpectAll(
+                status().isOk()
+        ).andExpect(result -> {
+            System.out.println(result.getResponse().getContentAsString());
         });
-        try {
-            Thread.sleep(2000L);
-            TransactionResponse realtimeTransactionStatus = transactionService.getRealtimeTransactionStatus(response.getOrder_id());
-            assertNotNull(realtimeTransactionStatus);
-            System.out.println(realtimeTransactionStatus.toString());
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Test
-    void testFindAllTransactionSuccess(){
+    void testFindByIdTransaction() throws Exception {
         MidtransPaymentApiRequest request = new MidtransPaymentApiRequest();
         request.setBank_transfer("bca");
         request.setCartId(cart.getId());
-        TransactionCreateResponse response = transactionOperations.execute(status -> {
-            try {
-                return transactionService.createTransaction(user, request);
-            } catch (MidtransError | JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+
+        TransactionCreateResponse response = transactionService.createTransaction(user, request);
+
+        mc.perform(
+                get("/api/user/transaction/" + response.getOrder_id())
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION , "Bearer " + user.getToken())
+        ).andExpectAll(
+                status().isOk()
+        ).andExpect(result -> {
+            System.out.println(result.getResponse().getContentAsString());
         });
-        try {
-            Thread.sleep(2000L);
-            List<TransactionResponse> responses = transactionService.findAllTransactionUser(user);
-            assertNotNull(responses);
-            responses.forEach(System.out::println);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
     }
-
-
 
 }

@@ -19,7 +19,6 @@ import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -28,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -47,7 +47,7 @@ public class TransactionServiceImpl implements TransactionService {
     private ApplicationProperties properties;
     @Override
     @Transactional
-    public TransactionResponse createTransaction(User user, MidtransPaymentApiRequest request) throws MidtransError, JsonProcessingException {
+    public TransactionCreateResponse createTransaction(User user, MidtransPaymentApiRequest request) throws MidtransError, JsonProcessingException {
         validationService.validate(request);
         Cart cart = cartRepository.findByUserAndId(user, request.getCartId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "cart id not found"));
         if(cart.getStatusCart().equals(STATUS_CART.CHECKOUT)||cart.getStatusCart().equals(STATUS_CART.DONE)){
@@ -79,36 +79,36 @@ public class TransactionServiceImpl implements TransactionService {
         paymentRequest.setTransaction_details(transactionDetailsRequest);
         Map<String, Object> jsonRequest = castToRequestJson(paymentRequest);
         JSONObject jsonObject = coreApi.chargeTransaction(jsonRequest);
-        TransactionResponse transactionResponse = objectMapper.readValue(jsonObject.toString(), TransactionResponse.class);
-        if(transactionResponse.getStatus_code().equals("201")){
+        TransactionCreateResponse transactionCreateResponse = objectMapper.readValue(jsonObject.toString(), TransactionCreateResponse.class);
+        if(transactionCreateResponse.getStatus_code().equals("201")){
             cart.setStatusCart(STATUS_CART.CHECKOUT);
             cartRepository.save(cart);
 
             transaction.setStatus_transaction(STATUS_TRANSACTION.WAITING_PAYMENT);
             transaction.setCart(cart);
-            transaction.setCreatedPayment(stringToInstant(transactionResponse.getTransaction_time()));
+            transaction.setCreatedPayment(stringToInstant(transactionCreateResponse.getTransaction_time()));
             transaction.setUser(user);
             transaction.setCreatedAt(Instant.now());
             transaction.setUpdatedAt(Instant.now());
-            transaction.setVaNumber(transactionResponse.getVa_numbers().get(0).getVa_number());
+            transaction.setVaNumber(transactionCreateResponse.getVa_numbers().get(0).getVa_number());
             if(request.getBank_transfer().equals("bca")){
                 transaction.setBank_method(BANK_METHOD.BCA);
             }else{
                 transaction.setBank_method(BANK_METHOD.BRI);
             }
             transaction.setRestaurant(cart.getRestaurant());
-            transaction.setExpiredPayment(stringToInstant(transactionResponse.getExpiry_time()));
+            transaction.setExpiredPayment(stringToInstant(transactionCreateResponse.getExpiry_time()));
             transaction.setTotalPrice(cart.getTotalPrice());
             transactionRepository.save(transaction);
-            return transactionResponse;
+            return transactionCreateResponse;
         }
-        throw new ResponseStatusException(HttpStatusCode.valueOf(Integer.parseInt(transactionResponse.getStatus_code())) , transactionResponse.getStatus_message());
+        throw new ResponseStatusException(HttpStatusCode.valueOf(Integer.parseInt(transactionCreateResponse.getStatus_code())) , transactionCreateResponse.getStatus_message());
     }
 
 
     @Override
     @Transactional
-    public TransactionByIdResponse getRealtimeTransactionStatus(String transactionId) throws MidtransError {
+    public TransactionResponse getRealtimeTransactionStatus(String transactionId) throws MidtransError {
         Transaction transaction = transactionRepository.findById(transactionId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "transaction not found"));
         JSONObject transactionResponse = coreApi.checkTransaction(transaction.getId());
         log.info(transactionResponse.toString());
@@ -158,7 +158,7 @@ public class TransactionServiceImpl implements TransactionService {
                     break;
                 }
             }
-            return castToTransactionByIdResponse(response , transaction);
+            return castToTransactionResponse(transaction);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -181,7 +181,7 @@ public class TransactionServiceImpl implements TransactionService {
             case "cancel" -> {
                 transaction.setStatus_transaction(STATUS_TRANSACTION.CANCELED);
                 Cart cart = transaction.getCart();
-                cart.setStatusCart(STATUS_CART.DONE);
+                cart.setStatusCart(STATUS_CART.CANCEL);
                 transaction = transactionRepository.save(transaction);
                 log.info(transaction.toString());
                 cartRepository.save(cart);
@@ -191,7 +191,7 @@ public class TransactionServiceImpl implements TransactionService {
             case "expire" -> {
                 transaction.setStatus_transaction(STATUS_TRANSACTION.EXPIRE);
                 Cart cart = transaction.getCart();
-                cart.setStatusCart(STATUS_CART.DONE);
+                cart.setStatusCart(STATUS_CART.EXPIRE);
                 transaction = transactionRepository.save(transaction);
                 log.info(transaction.toString());
                 cartRepository.save(cart);
@@ -201,7 +201,7 @@ public class TransactionServiceImpl implements TransactionService {
             case "pending" ->{
                 transaction.setStatus_transaction(STATUS_TRANSACTION.WAITING_PAYMENT);
                 Cart cart = transaction.getCart();
-                cart.setStatusCart(STATUS_CART.CHECKOUT);
+                cart.setStatusCart(STATUS_CART.QUEUE);
                 transaction = transactionRepository.save(transaction);
                 log.info("pending update");
                 log.info(transaction.toString());
@@ -209,6 +209,11 @@ public class TransactionServiceImpl implements TransactionService {
                 break;
             }
         }
+    }
+
+    @Override
+    public List<TransactionResponse> findAllTransactionUser(User user) {
+        return transactionRepository.findAllByUser(user).stream().map(this::castToTransactionResponse).toList();
     }
 
 
@@ -222,12 +227,12 @@ public class TransactionServiceImpl implements TransactionService {
         return localDateTime.atZone(ZoneId.systemDefault()).toInstant();
     }
 
-    private TransactionByIdResponse castToTransactionByIdResponse(TransactionStatusResponse response , Transaction transaction){
+    private TransactionResponse castToTransactionResponse(Transaction transaction){
         CartTransactionResponse cartResponse = new CartTransactionResponse();
         cartResponse.setCreated_at(transaction.getCart().getCreatedAt().toString());
         cartResponse.setUpdated_at(transaction.getCart().getUpdatedAt().toString());
         cartResponse.setId(transaction.getCart().getId());
-        cartResponse.setTotal_price(response.getGross_amount());
+        cartResponse.setTotal_price(String.valueOf(transaction.getTotalPrice()));
         cartResponse.setItem_details(new ArrayList<>());
         for (CartDetail cartDetail : transaction.getCart().getCartDetails()) {
             CartDetailTransactionResponse detailTransaction = new CartDetailTransactionResponse();
@@ -240,14 +245,15 @@ public class TransactionServiceImpl implements TransactionService {
             menuResponse.setPrice(cartDetail.getMenu().getPrice());
             menuResponse.setName(cartDetail.getMenu().getName());
             detailTransaction.setMenu(menuResponse);
+            cartResponse.getItem_details().add(detailTransaction);
         }
-        TransactionByIdResponse transactionByIdResponse = new TransactionByIdResponse();
+        TransactionResponse transactionByIdResponse = new TransactionResponse();
         transactionByIdResponse.setCreated_at(transaction.getCreatedAt().toString());
         transactionByIdResponse.setUpdated_at(transaction.getUpdatedAt().toString());
         transactionByIdResponse.setTotal_price(transaction.getTotalPrice());
         transactionByIdResponse.setCart(cartResponse);
         transactionByIdResponse.setId(transaction.getId());
-        transactionByIdResponse.setPayment(new VaNumber(response.getVa_numbers().get(0).getBank() , response.getVa_numbers().get(0).getVa_number()));
+        transactionByIdResponse.setPayment(new VaNumber(transaction.getBank_method().name(), transaction.getVaNumber()));
         transactionByIdResponse.setStatus(transaction.getStatus_transaction().name());
         return transactionByIdResponse;
     }

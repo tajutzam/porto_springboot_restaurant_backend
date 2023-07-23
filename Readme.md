@@ -1,5 +1,6 @@
 # Getting Started
 
+#### Please Open with Intellij idea for better experience
 
 # Step to run this application
  - Prerequisites: Ensure that you have obtained the Midtrans server key, which is required for processing transactions.
@@ -8,6 +9,27 @@
  - Setting Up Midtrans Notification: In the Midtrans dashboard, configure the notification URL to point to your hosted application's /api/transaction endpoint. This endpoint should handle incoming transaction notifications from Midtrans.
  - Testing: Once everything is set up, you can perform test transactions to see how the application handles Midtrans notifications and updates the transaction status accordingly.
 
+
+### Roles
+- User 
+- Restaurant
+- Admin
+
+### Api spec
+- User 
+  - cart [file:///tmp/swagger-ui8/index.html](file:///tmp/swagger-ui8/index.html)
+  - menu [file:///tmp/swagger-ui11/index.html](file:///tmp/swagger-ui11/index.html)
+  - transaction [file:///tmp/swagger-ui9/index.html](file:///tmp/swagger-ui9/index.html)
+  - user [file:///tmp/swagger-ui5/index.html](file:///tmp/swagger-ui5/index.html)
+- restaurant 
+  - menu [file:///tmp/swagger-ui4/index.html](file:///tmp/swagger-ui4/index.html)
+  - restaurant [file:///tmp/swagger-ui3/index.html](file:///tmp/swagger-ui3/index.html)
+  - transaction [file:///tmp/swagger-ui10/index.html](file:///tmp/swagger-ui10/index.html)
+- admin 
+  - [file:///tmp/swagger-ui7/index.html](file:///tmp/swagger-ui4/index.html)
+
+# Authorization 
+- use the access token and refresh the jwt token as the authorization, send your token through the Bearer token authentication
 
 
 
