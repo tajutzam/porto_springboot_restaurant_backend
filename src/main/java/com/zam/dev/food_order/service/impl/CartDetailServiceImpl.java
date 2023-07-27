@@ -8,6 +8,7 @@ import com.zam.dev.food_order.properties.ApplicationProperties;
 import com.zam.dev.food_order.repository.CartDetailRepository;
 import com.zam.dev.food_order.repository.CartRepository;
 import com.zam.dev.food_order.repository.MenuRepository;
+import com.zam.dev.food_order.repository.RestaurantRepository;
 import com.zam.dev.food_order.service.CartDetailService;
 import com.zam.dev.food_order.service.CartService;
 import com.zam.dev.food_order.service.ValidationService;
@@ -25,6 +26,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Slf4j
 public class CartDetailServiceImpl implements CartDetailService {
+    private final RestaurantRepository restaurantRepository;
 
     private CartDetailRepository cartDetailRepository;
 
@@ -86,6 +88,8 @@ public class CartDetailServiceImpl implements CartDetailService {
     @Override
     public WebResponse<Object> checkRestaurantInCart(CartRequest request, User user) {
         validationService.validate(request);
+
+        restaurantRepository.findById(request.getRestaurant_id()).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST , "restaurant id not found"));
         CartResponse cartResponse = cartService.checkRestaurantCart(request.getRestaurant_id(), user);
         if (cartResponse == null) {
             return WebResponse.builder().status(HttpStatus.OK.value()).message("OK").data(true).build();

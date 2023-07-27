@@ -25,7 +25,7 @@ public class Transaction {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status_transaction")
-    private STATUS_TRANSACTION status_transaction;
+    private STATUS_TRANSACTION statusTransaction;
 
     @Column(name = "total_price")
     private int totalPrice;
@@ -63,7 +63,7 @@ public class Transaction {
         return "Transaction{" +
                 "id='" + id + '\'' +
                 ", cart=" + cart +
-                ", status_transaction=" + status_transaction +
+                ", status_transaction=" + statusTransaction +
                 ", totalPrice=" + totalPrice +
                 ", restaurant=" + restaurant +
                 ", user=" + user +
@@ -77,11 +77,11 @@ public class Transaction {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Transaction that = (Transaction) o;
-        return totalPrice == that.totalPrice && Objects.equals(id, that.id) && Objects.equals(cart, that.cart) && status_transaction == that.status_transaction && Objects.equals(restaurant, that.restaurant) && Objects.equals(user, that.user) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
+        return totalPrice == that.totalPrice && Objects.equals(id, that.id) && Objects.equals(cart, that.cart) && statusTransaction == that.statusTransaction && Objects.equals(restaurant, that.restaurant) && Objects.equals(user, that.user) && Objects.equals(createdAt, that.createdAt) && Objects.equals(updatedAt, that.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, cart, status_transaction, totalPrice, restaurant, user, createdAt, updatedAt);
+        return Objects.hash(id, cart, statusTransaction, totalPrice, restaurant, user, createdAt, updatedAt);
     }
 }

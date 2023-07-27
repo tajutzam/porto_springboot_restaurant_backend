@@ -1,9 +1,6 @@
 package com.zam.dev.food_order.service.impl;
 
-import com.zam.dev.food_order.entity.Category;
-import com.zam.dev.food_order.entity.Menu;
-import com.zam.dev.food_order.entity.Restaurant;
-import com.zam.dev.food_order.entity.STATUS_MENU;
+import com.zam.dev.food_order.entity.*;
 import com.zam.dev.food_order.model.admin.CategoryResponse;
 import com.zam.dev.food_order.model.menu.MenuRequest;
 import com.zam.dev.food_order.model.menu.MenuResponse;
@@ -156,6 +153,11 @@ public class MenuServiceImpl implements MenuService {
     private MenuResponse castToMenuResponse(Menu menu, Category category, Restaurant restaurant) {
         RestaurantResponse restaurantResponse = restaurantService.castToRestaurantResponse(restaurant);
         CategoryResponse categoryResponse = categoryService.castToCategoryResponse(category);
+        double rate = 0;
+        if(menu.getRatingMenus() != null){
+            rate = calculateRating(menu);
+        }
+
         return MenuResponse.builder()
                 .category(categoryResponse)
                 .restaurant(restaurantResponse)
@@ -165,7 +167,16 @@ public class MenuServiceImpl implements MenuService {
                 .image("http://localhost:" + applicationProperties.getPort() + "/images/menu/" + menu.getImage())
                 .created_at(menu.getCreatedAt())
                 .updated_at(menu.getUpdatedAt())
+                .rate(rate)
                 .build();
+    }
+
+    private double calculateRating(Menu menu){
+        double rate = 0.0;
+        for (int i = 0; i < menu.getRatingMenus().size(); i++) {
+            rate += menu.getRatingMenus().get(i).getTotalRate();
+        }
+        return rate / menu.getRatingMenus().size();
     }
 
 

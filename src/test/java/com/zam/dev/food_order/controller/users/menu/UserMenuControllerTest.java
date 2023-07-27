@@ -3,9 +3,12 @@ package com.zam.dev.food_order.controller.users.menu;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zam.dev.food_order.entity.*;
+import com.zam.dev.food_order.model.RatingMenuRequest;
+import com.zam.dev.food_order.model.other.WebResponse;
 import com.zam.dev.food_order.model.transaksi.CartDetailRequest;
 import com.zam.dev.food_order.model.menu.MenuResponse;
 import com.zam.dev.food_order.model.other.ObjectPagingResponse;
+import com.zam.dev.food_order.model.transaksi.CartRequest;
 import com.zam.dev.food_order.repository.*;
 import com.zam.dev.food_order.security.Bcrypt;
 import com.zam.dev.food_order.service.JwtService;
@@ -110,6 +113,69 @@ class UserMenuControllerTest {
         });
 
     }
+
+    @Test
+    void testRatingMenu()throws Exception{
+        RatingMenuRequest request = new RatingMenuRequest();
+        request.setMenuId(menu.getId());
+        request.setRate(5);
+        mc.perform(
+                post("/api/user/menu/rating/add")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION , "Bearer " + user.getToken())
+        ).andExpectAll(
+                status().isCreated()
+        ).andExpect(result -> {
+            WebResponse<Integer> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<WebResponse<Integer>>() {
+            });
+            assertEquals(1 , response.getData());
+        });
+    }
+
+    @Test
+    void testRatingBadRequest()throws Exception{
+        RatingMenuRequest request = new RatingMenuRequest();
+        request.setMenuId(menu.getId());
+        request.setRate(0);
+        mc.perform(
+                post("/api/user/menu/rating/add")
+                        .content(objectMapper.writeValueAsString(request))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION , "Bearer " + user.getToken())
+        ).andExpectAll(
+                status().isBadRequest()
+        ).andExpect(result -> {
+            WebResponse<Integer> response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<WebResponse<Integer>>() {
+            });
+            assertNull(response.getData());
+        });
+    }
+
+    @Test
+    void testCheckCartRestaurantNotAvailable()throws Exception{
+        CartRequest request = new CartRequest();
+        request.setRestaurant_id(restaurant.getId());
+        mc.perform(
+                get("/api/user/menu/order/check/restaurant")
+                        .header(HttpHeaders.AUTHORIZATION , "Bearer " + user.getToken())
+                        .content(objectMapper.writeValueAsString(request))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+        ).andExpectAll(
+                status().isAccepted()
+        ).andExpect(
+                result -> {
+                    WebResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<WebResponse>() {
+                    });
+                    System.out.println(response.getData().toString());
+                }
+        );
+    }
+
+
 
 
 

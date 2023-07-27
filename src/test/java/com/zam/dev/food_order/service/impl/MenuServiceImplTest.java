@@ -263,6 +263,7 @@ class MenuServiceImplTest {
     @Test
     void testFindAllMenu(){
         ObjectPagingResponse<List<MenuResponse>> pagingResponse = menuService.findAll(0, 1);
+        pagingResponse.getData().forEach(System.out::println);
         assertNotNull(pagingResponse);
         assertNotNull(pagingResponse.getMessage());
         assertEquals(0 , pagingResponse.getObjectPaging().getPage());

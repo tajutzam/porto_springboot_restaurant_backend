@@ -8,14 +8,19 @@ import com.zam.dev.food_order.resolver.AdminArgumentResolver;
 import com.zam.dev.food_order.resolver.RestaurantArgumentResolver;
 import com.zam.dev.food_order.resolver.UserArgumentResolver;
 import com.zam.dev.food_order.security.BCrypt;
+import io.swagger.v3.oas.models.ExternalDocumentation;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.List;
+
+import java.util.*;
 
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
@@ -30,6 +35,37 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private ApplicationProperties properties;
+
+    ExternalDocumentation documentation;
+
+    List<Map<String  , String>> externalDoc = List.of(
+            new HashMap<>() {{
+                put("docName", "admin/admin.json");
+            }},
+            new HashMap<>() {{
+                put("docName", "restaurant/menu_restaurant.json");
+            }},
+            new HashMap<>() {{
+                put("docName", "restaurant/restaurant.json");
+            }},
+            new HashMap<>() {{
+                put("docName", "restaurant/transaction_restaurant.json");
+            }},
+            new HashMap<>() {{
+                put("docName", "user/cart_users.json");
+            }},
+            new HashMap<>() {{
+                put("docName", "user/menu_users.json");
+            }},
+            new HashMap<>() {{
+                put("docName", "user/transaction_users.json");
+            }},
+            new HashMap<>() {{
+                put("docName", "user/users.json");
+            }}
+    );
+
+
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
@@ -54,12 +90,25 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .setServerKey(properties.getServerKey())
                 .setClientKey(properties.getClientKey())
                 .setIsProduction(properties.isProductionMode())
-                .setConnectionTimeout(5000)
-                .setWriteTimeout(5000)
-                .setReadTimeout(5000)
+                .setConnectionTimeout(10000)
+                .setWriteTimeout(10000)
+                .setReadTimeout(10000)
                 .build();
 
         return new ConfigFactory(coreApiConfigOptions).getCoreApi();
     }
+
+
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler("swagger-ui.html")
+//                .addResourceLocations("classpath:/META-INF/resources/");
+//
+//        registry.addResourceHandler("/webjars/**")
+//                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+//    }
+
+
+
 
 }

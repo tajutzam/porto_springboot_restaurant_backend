@@ -3,26 +3,28 @@ package com.zam.dev.food_order.service.impl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.midtrans.httpclient.error.MidtransError;
 import com.zam.dev.food_order.entity.*;
-import com.zam.dev.food_order.model.transaksi.CartDetailRequest;
+import com.zam.dev.food_order.model.transaksi.*;
 import com.zam.dev.food_order.model.midtrans.MidtransPaymentApiRequest;
-import com.zam.dev.food_order.model.transaksi.TransactionResponse;
-import com.zam.dev.food_order.model.transaksi.TransactionCreateResponse;
 import com.zam.dev.food_order.repository.*;
 import com.zam.dev.food_order.service.CartDetailService;
 import com.zam.dev.food_order.service.TransactionService;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.support.TransactionOperations;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Slf4j
 class TransactionServiceImplTest
 {
 
@@ -61,6 +63,7 @@ class TransactionServiceImplTest
 
 
     @BeforeEach
+
     void setUp(){
         userRepository.deleteAll();
         cartRepository.deleteAll();
@@ -189,7 +192,7 @@ class TransactionServiceImplTest
         });
         try {
             Thread.sleep(2000L);
-            List<TransactionResponse> responses = transactionService.findAllTransactionUser(user);
+            List<TransactionResponse> responses = transactionService.findAllTransactionUser(user , STATUS_TRANSACTION.WAITING_PAYMENT);
             assertNotNull(responses);
             responses.forEach(System.out::println);
         } catch (InterruptedException e) {
@@ -198,6 +201,75 @@ class TransactionServiceImplTest
 
     }
 
+    @Test
+    void testUpdateStatusTransactionSuccess(){
+        TransactionUpdateRequest request = new TransactionUpdateRequest();
+        Transaction transaction = new Transaction();
+        transaction.setStatusTransaction(STATUS_TRANSACTION.WAITING_PAYMENT);
+        transaction.setUpdatedAt(Instant.now());
+        transaction.setCreatedAt(Instant.now());
+        transaction.setCart(cart);
+        transaction.setBank_method(BANK_METHOD.BCA);
+        transaction.setTotalPrice(200);
+        transaction.setExpiredPayment(Instant.now());
+        transaction.setId(UUID.randomUUID().toString());
+        transaction.setUser(user);
+        transaction.setVaNumber("123123");
+        transaction.setRestaurant(restaurant);
+        transactionRepository.save(transaction);
+        request.setStatus_transaction("CANCELED");
+        TransactionUpdateResponse response = transactionService.updateStatus(request, restaurant, transaction.getId());
+        assertNotNull(response);
+        log.info(response.toString());
+    }
 
+
+    @Test
+    void testUpdateStatusCanceledFailed(){
+        assertThrows(ResponseStatusException.class , () -> {
+            TransactionUpdateRequest request = new TransactionUpdateRequest();
+            Transaction transaction = new Transaction();
+            transaction.setStatusTransaction(STATUS_TRANSACTION.PROCESS);
+            transaction.setUpdatedAt(Instant.now());
+            transaction.setCreatedAt(Instant.now());
+            transaction.setCart(cart);
+            transaction.setBank_method(BANK_METHOD.BCA);
+            transaction.setTotalPrice(200);
+            transaction.setExpiredPayment(Instant.now());
+            transaction.setId(UUID.randomUUID().toString());
+            transaction.setUser(user);
+            transaction.setVaNumber("123123");
+            transaction.setRestaurant(restaurant);
+            transactionRepository.save(transaction);
+            request.setStatus_transaction("CANCELED");
+            TransactionUpdateResponse response = transactionService.updateStatus(request, restaurant, transaction.getId());
+            assertNotNull(response);
+            log.info(response.toString());
+        });
+    }
+
+    @Test
+    void testUpdateBadRequest(){
+        assertThrows(ConstraintViolationException.class , () -> {
+            TransactionUpdateRequest request = new TransactionUpdateRequest();
+            Transaction transaction = new Transaction();
+            transaction.setStatusTransaction(STATUS_TRANSACTION.WAITING_PAYMENT);
+            transaction.setUpdatedAt(Instant.now());
+            transaction.setCreatedAt(Instant.now());
+            transaction.setCart(cart);
+            transaction.setBank_method(BANK_METHOD.BCA);
+            transaction.setTotalPrice(200);
+            transaction.setExpiredPayment(Instant.now());
+            transaction.setId(UUID.randomUUID().toString());
+            transaction.setUser(user);
+            transaction.setVaNumber("123123");
+            transaction.setRestaurant(restaurant);
+            transactionRepository.save(transaction);
+            request.setStatus_transaction("EXPIRE");
+            TransactionUpdateResponse response = transactionService.updateStatus(request, restaurant, transaction.getId());
+            assertNotNull(response);
+            log.info(response.toString());
+        });
+    }
 
 }

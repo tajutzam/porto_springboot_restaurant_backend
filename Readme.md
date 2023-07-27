@@ -16,17 +16,7 @@
 - Admin
 
 ### Api spec
-- User 
-  - cart [file:///tmp/swagger-ui8/index.html](file:///tmp/swagger-ui8/index.html)
-  - menu [file:///tmp/swagger-ui11/index.html](file:///tmp/swagger-ui11/index.html)
-  - transaction [file:///tmp/swagger-ui9/index.html](file:///tmp/swagger-ui9/index.html)
-  - user [file:///tmp/swagger-ui5/index.html](file:///tmp/swagger-ui5/index.html)
-- restaurant 
-  - menu [file:///tmp/swagger-ui4/index.html](file:///tmp/swagger-ui4/index.html)
-  - restaurant [file:///tmp/swagger-ui3/index.html](file:///tmp/swagger-ui3/index.html)
-  - transaction [file:///tmp/swagger-ui10/index.html](file:///tmp/swagger-ui10/index.html)
-- admin 
-  - [file:///tmp/swagger-ui7/index.html](file:///tmp/swagger-ui4/index.html)
+open [documentation](http://localhost:8081/documentation-api.html)
 
 # Authorization 
 - use the access token and refresh the jwt token as the authorization, send your token through the Bearer token authentication

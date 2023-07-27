@@ -8,6 +8,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -27,6 +28,7 @@ public class Menu {
     private int price;
 
 
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status_menu")
     private STATUS_MENU statusMenu;
@@ -44,6 +46,9 @@ public class Menu {
     @LastModifiedDate
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+    @OneToMany(mappedBy = "menu" , fetch = FetchType.EAGER)
+    private List<RatingMenu> ratingMenus;
 
     @Override
     public boolean equals(Object o) {

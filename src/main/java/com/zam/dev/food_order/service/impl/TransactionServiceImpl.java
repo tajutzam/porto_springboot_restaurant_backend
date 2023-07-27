@@ -84,7 +84,7 @@ public class TransactionServiceImpl implements TransactionService {
             cart.setStatusCart(STATUS_CART.CHECKOUT);
             cartRepository.save(cart);
 
-            transaction.setStatus_transaction(STATUS_TRANSACTION.WAITING_PAYMENT);
+            transaction.setStatusTransaction(STATUS_TRANSACTION.WAITING_PAYMENT);
             transaction.setCart(cart);
             transaction.setCreatedPayment(stringToInstant(transactionCreateResponse.getTransaction_time()));
             transaction.setUser(user);
@@ -119,7 +119,7 @@ public class TransactionServiceImpl implements TransactionService {
             switch (response.getTransaction_status()) {
                 case "settlement" -> {
                     log.info(response.getTransaction_status());
-                    transaction.setStatus_transaction(STATUS_TRANSACTION.PROCESS);
+                    transaction.setStatusTransaction(STATUS_TRANSACTION.PROCESS);
                     Cart cart = transaction.getCart();
                     cart.setStatusCart(STATUS_CART.DONE);
                     transaction = transactionRepository.save(transaction);
@@ -128,7 +128,7 @@ public class TransactionServiceImpl implements TransactionService {
                     break;
                 }
                 case "cancel" -> {
-                    transaction.setStatus_transaction(STATUS_TRANSACTION.CANCELED);
+                    transaction.setStatusTransaction(STATUS_TRANSACTION.CANCELED);
                     Cart cart = transaction.getCart();
                     cart.setStatusCart(STATUS_CART.DONE);
                     transaction = transactionRepository.save(transaction);
@@ -138,7 +138,7 @@ public class TransactionServiceImpl implements TransactionService {
                     break;
                 }
                 case "expire" -> {
-                    transaction.setStatus_transaction(STATUS_TRANSACTION.EXPIRE);
+                    transaction.setStatusTransaction(STATUS_TRANSACTION.EXPIRE);
                     Cart cart = transaction.getCart();
                     cart.setStatusCart(STATUS_CART.DONE);
                     transaction = transactionRepository.save(transaction);
@@ -148,7 +148,7 @@ public class TransactionServiceImpl implements TransactionService {
                     break;
                 }
                 case "pending" ->{
-                    transaction.setStatus_transaction(STATUS_TRANSACTION.WAITING_PAYMENT);
+                    transaction.setStatusTransaction(STATUS_TRANSACTION.WAITING_PAYMENT);
                     Cart cart = transaction.getCart();
                     cart.setStatusCart(STATUS_CART.CHECKOUT);
                     transaction = transactionRepository.save(transaction);
@@ -170,7 +170,7 @@ public class TransactionServiceImpl implements TransactionService {
         switch (request.getTransaction_status()) {
             case "settlement" -> {
                 log.info(request.getTransaction_status());
-                transaction.setStatus_transaction(STATUS_TRANSACTION.PROCESS);
+                transaction.setStatusTransaction(STATUS_TRANSACTION.PROCESS);
                 Cart cart = transaction.getCart();
                 cart.setStatusCart(STATUS_CART.DONE);
                 transaction = transactionRepository.save(transaction);
@@ -179,7 +179,7 @@ public class TransactionServiceImpl implements TransactionService {
                 break;
             }
             case "cancel" -> {
-                transaction.setStatus_transaction(STATUS_TRANSACTION.CANCELED);
+                transaction.setStatusTransaction(STATUS_TRANSACTION.CANCELED);
                 Cart cart = transaction.getCart();
                 cart.setStatusCart(STATUS_CART.CANCEL);
                 transaction = transactionRepository.save(transaction);
@@ -189,7 +189,7 @@ public class TransactionServiceImpl implements TransactionService {
                 break;
             }
             case "expire" -> {
-                transaction.setStatus_transaction(STATUS_TRANSACTION.EXPIRE);
+                transaction.setStatusTransaction(STATUS_TRANSACTION.EXPIRE);
                 Cart cart = transaction.getCart();
                 cart.setStatusCart(STATUS_CART.EXPIRE);
                 transaction = transactionRepository.save(transaction);
@@ -199,7 +199,7 @@ public class TransactionServiceImpl implements TransactionService {
                 break;
             }
             case "pending" ->{
-                transaction.setStatus_transaction(STATUS_TRANSACTION.WAITING_PAYMENT);
+                transaction.setStatusTransaction(STATUS_TRANSACTION.WAITING_PAYMENT);
                 Cart cart = transaction.getCart();
                 cart.setStatusCart(STATUS_CART.QUEUE);
                 transaction = transactionRepository.save(transaction);
@@ -212,8 +212,62 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<TransactionResponse> findAllTransactionUser(User user) {
-        return transactionRepository.findAllByUser(user).stream().map(this::castToTransactionResponse).toList();
+    public List<TransactionResponse> findAllTransactionRestaurant(Restaurant restaurant, STATUS_TRANSACTION status_transaction) {
+        return transactionRepository.findAllByRestaurantAndStatusTransaction(restaurant , status_transaction).stream().map(this::castToTransactionResponse).toList();
+    }
+
+    @Override
+    public TransactionUpdateResponse updateStatus(TransactionUpdateRequest request, Restaurant restaurant , String id) {
+        validationService.validate(request);
+        Transaction transaction = transactionRepository.findByIdAndRestaurant(id, restaurant).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "transaction not found"));
+        if(transaction.getStatusTransaction().equals(STATUS_TRANSACTION.DONE)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "transaction has been completed");
+        }
+        if(transaction.getStatusTransaction().equals(STATUS_TRANSACTION.CANCELED)){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "transaction has been canceled");
+        }
+
+        switch (request.getStatus_transaction()) {
+            case "DELIVERED" -> {
+                if (!transaction.getStatusTransaction().equals(STATUS_TRANSACTION.PROCESS)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "transaction has not been processed by the user");
+                }
+                break;
+            }
+            case "CANCELED" -> {
+                if (transaction.getStatusTransaction().equals(STATUS_TRANSACTION.PROCESS)) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "the transaction cannot be canceled the user has made a payment");
+                } else if (transaction.getStatusTransaction().equals(STATUS_TRANSACTION.WAITING_PAYMENT)) {
+                    transaction.setStatusTransaction(STATUS_TRANSACTION.CANCELED);
+                    Transaction updatedTransaction = transactionRepository.save(transaction);
+                    TransactionUpdateResponse response = new TransactionUpdateResponse();
+                    response.setUpdated_at(updatedTransaction.getUpdatedAt().toString());
+                    response.setCreated_at(updatedTransaction.getCreatedAt().toString());
+                    response.setId(transaction.getId());
+                    response.setStatus(transaction.getStatusTransaction());
+                    return response;
+                }
+            }
+            case "DONE" ->{
+                if(!transaction.getStatusTransaction().equals(STATUS_TRANSACTION.DELIVERED)){
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "transaction status has not been delivered");
+                }
+                transaction.setStatusTransaction(STATUS_TRANSACTION.DONE);
+                Transaction updatedTransaction = transactionRepository.save(transaction);
+                TransactionUpdateResponse response = new TransactionUpdateResponse();
+                response.setUpdated_at(updatedTransaction.getUpdatedAt().toString());
+                response.setCreated_at(updatedTransaction.getCreatedAt().toString());
+                response.setId(transaction.getId());
+                response.setStatus(transaction.getStatusTransaction());
+                return response;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST , "there is an error");
+    }
+
+    @Override
+    public List<TransactionResponse> findAllTransactionUser(User user , STATUS_TRANSACTION status_transaction) {
+        return transactionRepository.findAllByUserAndStatusTransaction(user , status_transaction).stream().map(this::castToTransactionResponse).toList();
     }
 
 
@@ -254,7 +308,7 @@ public class TransactionServiceImpl implements TransactionService {
         transactionByIdResponse.setCart(cartResponse);
         transactionByIdResponse.setId(transaction.getId());
         transactionByIdResponse.setPayment(new VaNumber(transaction.getBank_method().name(), transaction.getVaNumber()));
-        transactionByIdResponse.setStatus(transaction.getStatus_transaction().name());
+        transactionByIdResponse.setStatus(transaction.getStatusTransaction().name());
         return transactionByIdResponse;
     }
 

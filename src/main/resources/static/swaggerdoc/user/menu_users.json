@@ -1,13 +1,13 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "Sample API",
+    "title": "Menu user api spec",
     "description": "API description in Markdown.",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "localhost:8081/api/user/menu"
+      "url": "http://localhost:8081/api/user/menu"
     }
   ],
   "components": {

@@ -151,11 +151,12 @@ class TransactionControllerTest {
 
     @Test
     void testCreateTransaction()throws Exception{
+        Thread.sleep(1000L);
         MidtransPaymentApiRequest request = new MidtransPaymentApiRequest();
         request.setBank_transfer("bca");
         request.setCartId(cart.getId());
         mc.perform(
-                post("/api/user/transaction")
+                post("/api/user/transaction/")
                         .header(HttpHeaders.AUTHORIZATION , "Bearer " + user.getToken())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -173,7 +174,7 @@ class TransactionControllerTest {
     @Test
     void testFindAllTransaction()throws Exception{
         mc.perform(
-                get("/api/user/transaction")
+                get("/api/user/transaction/")
                         .accept(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION , "Bearer " + user.getToken())
         ).andExpectAll(

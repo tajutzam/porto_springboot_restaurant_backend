@@ -24,6 +24,7 @@ public class MenuResponse {
     private RestaurantResponse restaurant;
     private Instant created_at;
     private Instant updated_at;
+    private double rate;
 
 
 }

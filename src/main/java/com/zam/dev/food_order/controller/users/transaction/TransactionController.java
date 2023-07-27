@@ -2,6 +2,7 @@ package com.zam.dev.food_order.controller.users.transaction;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.midtrans.httpclient.error.MidtransError;
+import com.zam.dev.food_order.entity.STATUS_TRANSACTION;
 import com.zam.dev.food_order.entity.User;
 import com.zam.dev.food_order.model.midtrans.MidtransPaymentApiRequest;
 import com.zam.dev.food_order.model.other.WebResponse;
@@ -22,7 +23,7 @@ public class TransactionController {
 
     private TransactionService transactionService;
 
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE , consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(path = "/" , produces = MediaType.APPLICATION_JSON_VALUE , consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public WebResponse<Object> createTransaction(User user , @RequestBody MidtransPaymentApiRequest request) throws MidtransError, JsonProcessingException {
 
@@ -31,10 +32,10 @@ public class TransactionController {
 
     }
 
-    @GetMapping(path = "" , produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/" , produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public WebResponse<Object> findAllTransactionUser(User user){
-        List<TransactionResponse> responses = transactionService.findAllTransactionUser(user);
+    public WebResponse<Object> findAllTransactionUser(User user , @RequestParam(name = "status" , defaultValue = "WAITING_PAYMENT")STATUS_TRANSACTION status_transaction){
+        List<TransactionResponse> responses = transactionService.findAllTransactionUser(user , status_transaction);
         return WebResponse.builder().message("OK").data(responses).status(HttpStatus.OK.value()).build();
     }
 

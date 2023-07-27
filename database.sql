@@ -47,17 +47,6 @@
       PRIMARY KEY (id)
     ) ENGINE INNODB;
 
-    CREATE TABLE rating_restaurant
-    (
-      id varchar(100) NOT NULL,
-      restaurant_id varchar(100) NOT NULL,
-      created_at timestamp NOT NULL,
-      total_rate double not null,
-      updated_at timestamp NOT NULL,
-      PRIMARY KEY (id),
-      FOREIGN KEY (restaurant_id) REFERENCES restaurant (id) ON DELETE CASCADE ON UPDATE CASCADE
-    ) ENGINE INNODB;
-
     CREATE TABLE transaksi
     (
       id varchar(100) NOT NULL,
@@ -106,16 +95,7 @@
       FOREIGN KEY (cart_id) REFERENCES cart (id) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE INNODB;
 
-    CREATE TABLE detail_rating_restaurant
-    (
-      id varchar(100) NOT NULL,
-      user_id varchar(100) NOT NULL,
-      rating_restaurant_id varchar(100) NOT NULL,
-      rate INT NOT NULL,
-      PRIMARY KEY (id),
-      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
-      FOREIGN KEY (rating_restaurant_id) REFERENCES rating_restaurant (id) ON DELETE CASCADE ON UPDATE CASCADE
-    ) ENGINE INNODB;
+
 
     CREATE TABLE menu
     (
@@ -138,24 +118,15 @@
       id varchar(100) NOT NULL,
       total_rate double NOT NULL,
       menu_id varchar(100) NOT NULL,
+      user_id varchar(100) not null,
       created_at timestamp NOT NULL,
       updated_at timestamp NOT NULL,
       PRIMARY KEY (id),
+      foreign key(user_id) references users(id) on delete cascade on update cascade,
       FOREIGN KEY (menu_id) REFERENCES menu (id) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE INNODB;
 
-    CREATE TABLE detail_rating_menu
-    (
-      id varchar(100) NOT NULL,
-      rating_menu_id varchar(100) NOT NULL,
-      rate INT NOT NULL,
-      user_id varchar(100) NOT NULL,
-      created_at timestamp NOT NULL,
-      updated_at timestamp NOT NULL,
-      PRIMARY KEY (id),
-      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE,
-      FOREIGN KEY (rating_menu_id) REFERENCES rating_menu (id) ON DELETE CASCADE ON UPDATE CASCADE
-    ) ENGINE INNODB;
+
 
     ALTER TABLE users ADD avatar varchar(400);
     ALTER TABLE users ADD phone_number varchar(13) NOT NULL;

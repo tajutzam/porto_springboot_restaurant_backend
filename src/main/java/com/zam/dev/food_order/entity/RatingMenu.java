@@ -19,7 +19,6 @@ import java.time.Instant;
 @Table(name = "rating_menu")
 public class RatingMenu {
 
-
     @Id
     private String id;
     @Column(name = "total_rate")
@@ -28,6 +27,12 @@ public class RatingMenu {
     @ManyToOne
     @JoinColumn(name = "menu_id")
     private Menu menu;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+
 
     @CreatedDate
     @Column(name = "created_at")
